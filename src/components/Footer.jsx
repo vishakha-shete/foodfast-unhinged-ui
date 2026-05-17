@@ -65,7 +65,7 @@ export default function Footer() {
           © 2026 FoodSlow Inc.
         </p>
 
-        <p style={{ letterSpacing: '-1.5px', filter: 'blur(0.5px)' }}>
+        <p style={{ color: 'var(--cream-dim)', fontSize: '0.85rem' }}>
           Cold food. Wrong orders. Zero accountability.
         </p>
 

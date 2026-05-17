@@ -2,11 +2,12 @@
 import React, { useState, useEffect, useCallback, useRef } from 'react'
 import AppMockup from './AppMockup'
 
-export default function Hero() {
+export default function Hero({ navigateTo }) {
   const [offset, setOffset] = useState({ x: 0, y: 0 })
   const [orderText, setOrderText] = useState('Order Now')
   const [liveUsers, setLiveUsers] = useState(3492)
   const [clickCount, setClickCount] = useState(0)
+  const [evadesCount, setEvadesCount] = useState(0)
   const buttonRef = useRef(null)
 
   // 1. CONSTANT ANXIETY: The button violently shakes every few seconds
@@ -34,6 +35,12 @@ export default function Hero() {
   const handleOrderClick = () => {
     setClickCount(prev => prev + 1)
     
+    if (evadesCount >= 3) {
+      alert("🎉 Evasion threshold bypassed! Redirecting you to the Cursed Menu Page...")
+      navigateTo('menu')
+      return
+    }
+
     const msgs = [
       'Are you sure?',
       'Processing... jk',
@@ -42,6 +49,7 @@ export default function Hero() {
       'Downloading virus...',
       'Error 404: Hunger Not Found',
       'Just close the tab honestly',
+      'Fine, click me now!',
     ]
     
     const randomMsg = msgs[Math.floor(Math.random() * msgs.length)]
@@ -55,6 +63,14 @@ export default function Hero() {
 
   // 3. TRUE EVIL MAGNET: The button actively runs AWAY from the mouse
   const handleMouseMove = (e) => {
+    if (evadesCount >= 3) {
+      // Tired out! Let them click it.
+      if (orderText !== 'Fine, click me!') {
+        setOrderText('Fine, click me!')
+      }
+      return
+    }
+
     const btn = buttonRef.current
     if (!btn) return
 
@@ -67,7 +83,14 @@ export default function Hero() {
 
     // If mouse gets close, the button flees at mach speed
     if (Math.abs(distX) < 150 && Math.abs(distY) < 100) {
-      // The multipliers are positive now, pushing the button AWAY from the cursor position
+      setEvadesCount(prev => {
+        const next = prev + 1
+        if (next === 1) setOrderText('Wait, come back!')
+        if (next === 2) setOrderText('Almost got it...')
+        if (next >= 3) setOrderText('Fine, click me!')
+        return next
+      })
+
       const escapeX = distX > 0 ? -120 : 120;
       const escapeY = distY > 0 ? -80 : 80;
 
@@ -77,6 +100,7 @@ export default function Hero() {
   }
 
   const handleMouseLeave = () => {
+    if (evadesCount >= 3) return
     if (buttonRef.current) {
       buttonRef.current.style.transform = `translate(${offset.x}px, ${offset.y}px)`
     }

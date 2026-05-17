@@ -1,12 +1,14 @@
+@import "./flow.css";
+
 /* ===== RESET & BASE ===== */
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
 :root{
   --bg:#1a1714;--bg-light:#242019;--bg-card:#1e1b17;
-  --cream:#f5f0e8;--cream-dim:#c4b9a5;
+  --cream:#f5f0e8;--cream-dim:#d6cebf; /* Increased contrast from #c4b9a5 for pristine readability */
   --orange:#c8612a;--orange-light:#e07a3a;--orange-dark:#8f4420;
   --red:#9b3b3b;--red-light:#c45050;
   --olive:#6b7c4e;--olive-dim:#4a5636;
-  --charcoal:#2a2520;--charcoal-light:#3a342d;
+  --charcoal:#2a2520;--charcoal-light:#443c34; /* Increased from #3a342d for sharper borders */
   --font-display:'Playfair Display',Georgia,serif;
   --font-body:'Space Grotesk','Segoe UI',sans-serif;
   --font-mono:'JetBrains Mono','Courier New',monospace;
@@ -21,7 +23,7 @@ body{
 /* ===== GRAIN OVERLAY ===== */
 body::after{
   content:'';position:fixed;inset:0;z-index:9999;pointer-events:none;
-  opacity:.06;
+  opacity:.02; /* Extremely subtle cinematic grain overlay for pristine text readability */
   background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
   background-repeat:repeat;background-size:200px;
 }
@@ -30,8 +32,8 @@ body::after{
 .nav{
   display:flex;align-items:center;justify-content:space-between;
   padding:1.4rem 3rem;position:fixed;top:0;left:0;right:0;z-index:100;
-  background:rgba(26,23,20,.85);backdrop-filter:blur(6px);
-  border-bottom:1px solid rgba(200,97,42,.08);
+  background:rgba(26,23,20,.94);backdrop-filter:blur(3px); /* Sharper overlay blur */
+  border-bottom:1px solid rgba(200,97,42,.12);
 }
 .nav-logo{font-family:var(--font-display);font-size:1.6rem;font-weight:900;color:var(--orange);letter-spacing:-1px;text-decoration:none}
 .nav-logo span{color:var(--cream);font-weight:400}
@@ -59,9 +61,10 @@ body::after{
 }
 .hero::before{
   content:'';position:absolute;top:0;left:0;right:0;bottom:0;
-  background:radial-gradient(ellipse 60% 50% at 20% 50%,rgba(200,97,42,.06),transparent),
-             radial-gradient(ellipse 40% 60% at 80% 30%,rgba(155,59,59,.04),transparent);
+  background:radial-gradient(ellipse 60% 50% at 20% 50%,rgba(200,97,42,.04),transparent),
+             radial-gradient(ellipse 40% 60% at 80% 30%,rgba(155,59,59,.03),transparent);
   pointer-events:none;
+  z-index:0; /* Explicitly layered behind hero left and right */
 }
 .hero-left{position:relative;z-index:2;padding-left:2rem}
 .hero-eyebrow{

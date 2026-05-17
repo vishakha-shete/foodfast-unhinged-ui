@@ -1,0 +1,495 @@
+/* ==========================================================================
+   FLOATING CHAOS SYSTEM - CURSED DESIGN SYSTEM STYLE
+   ========================================================================== */
+
+/* --- Fake Update Banner --- */
+.chaos-update-banner {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  background: var(--charcoal);
+  border-bottom: 2px solid var(--orange);
+  color: var(--cream);
+  z-index: 10000;
+  font-family: var(--font-mono);
+  font-size: 0.65rem;
+  padding: 8px 24px;
+  text-align: center;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  box-shadow: 0 4px 20px rgba(0,0,0,0.5);
+  transform: translateY(-100%);
+  animation: slideBannerDown 0.6s cubic-bezier(0.19, 1, 0.22, 1) forwards;
+}
+
+@keyframes slideBannerDown {
+  to { transform: translateY(0); }
+}
+
+.chaos-update-banner .pulse-dot {
+  width: 6px;
+  height: 6px;
+  background: var(--red-light);
+  border-radius: 50%;
+  display: inline-block;
+  box-shadow: 0 0 8px var(--red-light);
+  animation: bannerPulse 1.2s infinite alternate;
+}
+
+@keyframes bannerPulse {
+  0% { transform: scale(0.8); opacity: 0.5; }
+  100% { transform: scale(1.2); opacity: 1; }
+}
+
+.chaos-update-banner button {
+  background: transparent;
+  border: 1px solid var(--charcoal-light);
+  color: var(--cream-dim);
+  font-family: var(--font-mono);
+  font-size: 0.55rem;
+  padding: 2px 8px;
+  cursor: pointer;
+  margin-left: 12px;
+  border-radius: 2px;
+  transition: all 0.2s ease;
+}
+
+.chaos-update-banner button:hover {
+  background: var(--orange-dark);
+  color: var(--cream);
+  border-color: var(--orange);
+}
+
+/* Push navbar down when update banner is visible */
+body {
+  padding-top: 32px !important;
+}
+
+.nav {
+  top: 32px !important;
+}
+
+/* --- Floating Drift Popups --- */
+.chaos-popup-container {
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 9990;
+}
+
+.chaos-popup {
+  position: absolute;
+  pointer-events: auto;
+  background: var(--bg-card);
+  border: 2px solid var(--charcoal-light);
+  box-shadow: 8px 8px 0px rgba(0,0,0,0.3);
+  padding: 16px;
+  width: 280px;
+  border-radius: 4px;
+  font-family: var(--font-body);
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  transition: transform 0.1s ease, opacity 0.3s ease;
+  animation: floatDrift 8s ease-in-out infinite alternate;
+}
+
+@keyframes floatDrift {
+  0% { transform: translate(0, 0) rotate(1deg); }
+  50% { transform: translate(10px, -15px) rotate(-1.5deg); }
+  100% { transform: translate(-8px, 12px) rotate(0.8deg); }
+}
+
+.chaos-popup.style-charcoal {
+  background: var(--charcoal);
+  border-color: var(--charcoal-light);
+}
+
+.chaos-popup.style-orange {
+  border-color: var(--orange);
+  box-shadow: 8px 8px 0px rgba(200, 97, 42, 0.15);
+}
+
+.chaos-popup.style-red {
+  border-color: var(--red);
+  box-shadow: 8px 8px 0px rgba(155, 59, 59, 0.15);
+}
+
+.chaos-popup-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-bottom: 1px solid rgba(255,255,255,0.06);
+  padding-bottom: 6px;
+}
+
+.chaos-popup-title {
+  font-family: var(--font-mono);
+  font-size: 0.6rem;
+  text-transform: uppercase;
+  color: var(--olive);
+  letter-spacing: 1px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.chaos-popup-close {
+  background: transparent;
+  border: none;
+  color: var(--cream-dim);
+  font-family: var(--font-mono);
+  font-size: 0.7rem;
+  cursor: pointer;
+  opacity: 0.5;
+  transition: opacity 0.2s ease;
+}
+
+.chaos-popup-close:hover {
+  opacity: 1;
+  color: var(--red-light);
+}
+
+.chaos-popup-body {
+  font-size: 0.8rem;
+  line-height: 1.4;
+  color: var(--cream);
+}
+
+.chaos-popup-footer {
+  display: flex;
+  justify-content: flex-end;
+  gap: 8px;
+  margin-top: 4px;
+}
+
+.chaos-popup-btn {
+  font-family: var(--font-mono);
+  font-size: 0.6rem;
+  padding: 6px 12px;
+  border: 1px solid var(--charcoal-light);
+  background: transparent;
+  color: var(--cream-dim);
+  cursor: pointer;
+  border-radius: 2px;
+  transition: all 0.2s ease;
+}
+
+.chaos-popup-btn:hover {
+  background: var(--charcoal-light);
+  color: var(--cream);
+}
+
+.chaos-popup-btn.primary {
+  background: var(--orange);
+  color: var(--cream);
+  border-color: var(--orange);
+}
+
+.chaos-popup-btn.primary:hover {
+  background: var(--orange-light);
+}
+
+/* --- Cookie Banner --- */
+.chaos-cookie-banner {
+  position: fixed;
+  bottom: 24px;
+  left: 24px;
+  width: 320px;
+  background: var(--bg-card);
+  border: 2px solid var(--orange);
+  box-shadow: 10px 10px 0px rgba(0,0,0,0.4);
+  padding: 20px;
+  border-radius: 4px;
+  z-index: 10005;
+  font-family: var(--font-body);
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  pointer-events: auto;
+  transform: rotate(-0.5deg);
+  animation: slideCookieIn 0.8s cubic-bezier(0.19, 1, 0.22, 1) forwards;
+}
+
+@keyframes slideCookieIn {
+  from { transform: translateY(150px) rotate(-3deg); opacity: 0; }
+  to { transform: translateY(0) rotate(-0.5deg); opacity: 1; }
+}
+
+.chaos-cookie-title {
+  font-family: var(--font-display);
+  font-size: 1.1rem;
+  color: var(--cream);
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.chaos-cookie-body {
+  font-size: 0.75rem;
+  line-height: 1.5;
+  color: var(--cream-dim);
+}
+
+.chaos-cookie-buttons {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  position: relative;
+  height: 40px;
+}
+
+.chaos-cookie-accept {
+  position: absolute;
+  left: 0;
+  font-family: var(--font-body);
+  font-weight: 600;
+  font-size: 0.75rem;
+  padding: 8px 16px;
+  background: var(--orange);
+  color: var(--cream);
+  border: none;
+  border-radius: 3px;
+  cursor: pointer;
+  transition: background-color 0.2s ease, left 0.1s ease, top 0.1s ease;
+  z-index: 10006;
+}
+
+.chaos-cookie-accept:hover {
+  background: var(--orange-light);
+}
+
+.chaos-cookie-decline {
+  position: absolute;
+  right: 0;
+  font-family: var(--font-mono);
+  font-size: 0.55rem;
+  color: var(--cream-dim);
+  opacity: 0.4;
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  text-decoration: underline;
+}
+
+.chaos-cookie-decline:hover {
+  opacity: 0.8;
+}
+
+/* --- Session Expired Modal --- */
+.chaos-modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(26,23,20,0.93);
+  backdrop-filter: blur(4px); /* Reduced blur for sharper and crisper overlay rendering */
+  z-index: 10010;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  pointer-events: auto;
+}
+
+.chaos-expired-modal {
+  background: var(--charcoal);
+  border: 3px solid var(--red);
+  box-shadow: 12px 12px 0px rgba(0,0,0,0.5);
+  padding: 32px;
+  width: 420px;
+  border-radius: 4px;
+  font-family: var(--font-body);
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  transform: rotate(0.8deg);
+  animation: modalPop 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
+}
+
+@keyframes modalPop {
+  from { transform: scale(0.9) rotate(-3deg); opacity: 0; }
+  to { transform: scale(1) rotate(0.8deg); opacity: 1; }
+}
+
+.chaos-expired-title {
+  font-family: var(--font-display);
+  font-size: 1.6rem;
+  font-weight: 900;
+  color: var(--red-light);
+  line-height: 1.2;
+}
+
+.chaos-expired-subtitle {
+  font-family: var(--font-mono);
+  font-size: 0.6rem;
+  color: var(--olive);
+  text-transform: uppercase;
+  letter-spacing: 2px;
+}
+
+.chaos-expired-body {
+  font-size: 0.85rem;
+  line-height: 1.6;
+  color: var(--cream-dim);
+}
+
+.chaos-expired-input-group {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.chaos-expired-input-label {
+  font-family: var(--font-mono);
+  font-size: 0.55rem;
+  color: var(--cream-dim);
+  opacity: 0.6;
+  text-transform: uppercase;
+}
+
+.chaos-expired-input {
+  background: var(--bg-card);
+  border: 1px solid var(--charcoal-light);
+  color: var(--cream);
+  font-family: var(--font-mono);
+  font-size: 0.8rem;
+  padding: 12px;
+  border-radius: 2px;
+  outline: none;
+  transition: border-color 0.2s ease;
+}
+
+.chaos-expired-input:focus {
+  border-color: var(--red-light);
+}
+
+.chaos-expired-buttons {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin-top: 10px;
+}
+
+.chaos-expired-btn {
+  font-family: var(--font-body);
+  font-weight: 600;
+  font-size: 0.85rem;
+  padding: 12px;
+  background: var(--red);
+  color: var(--cream);
+  border: none;
+  cursor: pointer;
+  border-radius: 3px;
+  transition: all 0.2s ease;
+  text-align: center;
+}
+
+.chaos-expired-btn:hover {
+  background: var(--red-light);
+}
+
+.chaos-expired-help {
+  font-family: var(--font-mono);
+  font-size: 0.5rem;
+  color: var(--cream-dim);
+  opacity: 0.3;
+  text-align: center;
+}
+
+/* --- Fake AI Notifications --- */
+.chaos-ai-container {
+  position: fixed;
+  bottom: 24px;
+  right: 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  z-index: 10000;
+  pointer-events: none;
+}
+
+.chaos-ai-toast {
+  pointer-events: auto;
+  background: var(--bg-card);
+  border: 1px solid var(--charcoal-light);
+  border-left: 3px solid var(--olive);
+  padding: 12px 16px;
+  border-radius: 4px;
+  width: 290px;
+  box-shadow: 0 10px 25px rgba(0,0,0,0.4);
+  font-family: var(--font-body);
+  display: flex;
+  gap: 12px;
+  transform: translateX(350px);
+  animation: slideAiToastIn 0.5s cubic-bezier(0.19, 1, 0.22, 1) forwards;
+}
+
+@keyframes slideAiToastIn {
+  to { transform: translateX(0); }
+}
+
+.chaos-ai-icon {
+  font-size: 1.2rem;
+  color: var(--olive);
+}
+
+.chaos-ai-content {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.chaos-ai-header {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.chaos-ai-badge {
+  font-family: var(--font-mono);
+  font-size: 0.45rem;
+  background: rgba(107, 124, 78, 0.15);
+  color: var(--olive);
+  padding: 1px 4px;
+  border-radius: 2px;
+  font-weight: bold;
+}
+
+.chaos-ai-title {
+  font-family: var(--font-mono);
+  font-size: 0.55rem;
+  color: var(--cream-dim);
+  opacity: 0.6;
+  text-transform: uppercase;
+}
+
+.chaos-ai-body {
+  font-size: 0.7rem;
+  line-height: 1.4;
+  color: var(--cream);
+}
+
+/* --- Cursor Follower Toast --- */
+.chaos-cursor-toast {
+  position: fixed;
+  z-index: 9997;
+  pointer-events: none;
+  font-family: var(--font-mono);
+  font-size: 0.55rem;
+  background: var(--charcoal);
+  color: var(--cream);
+  border: 1px solid var(--charcoal-light);
+  padding: 4px 10px;
+  border-radius: 3px;
+  white-space: nowrap;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+  transform: translate(-50%, -50%);
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+
+.chaos-cursor-toast.visible {
+  opacity: 0.85;
+}

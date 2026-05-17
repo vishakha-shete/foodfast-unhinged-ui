@@ -1,11 +1,12 @@
 // Navbar.jsx - Upgraded for Ultimate Disorientation
 import React, { useState, useEffect } from 'react'
 
-export default function Navbar() {
+export default function Navbar({ currentPage, setCurrentPage, cart = [] }) {
   const [scrolled, setScrolled] = useState(false)
   const [loginText, setLoginText] = useState('Login')
   const [invert, setInvert] = useState(false)
   const [cookieBanner, setCookieBanner] = useState(true)
+  const [cookieHoverCount, setCookieHoverCount] = useState(0)
 
   // 1. THE DIZZY SCROLL: Scrolling turns the navbar upside down randomly
   useEffect(() => {
@@ -42,15 +43,28 @@ export default function Navbar() {
   }, [])
 
   // 3. MISDIRECTION LINKS
-  const handleLinkClick = (e, linkName) => {
+  const handleLinkClick = (e, pageName) => {
     e.preventDefault()
-    alert(`Error: The "${linkName}" section has been locked behind a premium subscription. Please look at our logo instead.`)
+    if (pageName === 'home') {
+      setCurrentPage('home')
+    } else if (pageName === 'menu') {
+      setCurrentPage('menu')
+    } else if (pageName === 'checkout') {
+      if (cart.length === 0) {
+        alert("❌ CRITICAL ERROR: You cannot checkout an empty cart. Please select food you will regret first.")
+        setCurrentPage('menu')
+      } else {
+        setCurrentPage('checkout')
+      }
+    }
   }
 
   // 4. LOG OUT INSTEAD OF LOG IN
   const handleLoginClick = () => {
     alert("Success! You have been logged out of your real-life banking app. Have a nice day.")
   }
+
+  const cartQuantity = cart.reduce((acc, item) => acc + item.qty, 0)
 
   return (
     <>
@@ -70,29 +84,30 @@ export default function Navbar() {
             : {
                 position: 'fixed',
                 top: 0,
+                bottom: 'auto', // Fix vertical stretching bug where top: 0 and bottom: 0 were active simultaneously!
               }),
         }}
       >
         {/* Logo that lies */}
-        <a href="#" className="nav-logo" onClick={(e) => { e.preventDefault(); alert("Why are you clicking the logo? It doesn't love you."); }}>
+        <a href="#" className="nav-logo" onClick={(e) => { e.preventDefault(); setCurrentPage('home'); alert("Navigating to home... Warning: your cart will be subjected to random database taxes."); }}>
           Food<span>Slow</span> {/* Changed from Fast */}
         </a>
 
-        {/* Links that lead nowhere */}
+        {/* Links that actually navigate but with cursed flavor */}
         <ul className="nav-links">
           <li>
-            <a href="#features" onClick={(e) => handleLinkClick(e, 'Features')}>
-              Unfeatures
+            <a href="#home" className={currentPage === 'home' ? 'active' : ''} onClick={(e) => handleLinkClick(e, 'home')}>
+              Home
             </a>
           </li>
           <li>
-            <a href="#reviews" onClick={(e) => handleLinkClick(e, 'Reviews')}>
-              Fake Reviews
+            <a href="#menu" className={currentPage === 'menu' ? 'active' : ''} onClick={(e) => handleLinkClick(e, 'menu')}>
+              Cursed Menu
             </a>
           </li>
           <li>
-            <a href="#cta" onClick={(e) => handleLinkClick(e, 'Pricing')}>
-              Overpricing
+            <a href="#checkout" className={currentPage === 'checkout' ? 'active' : ''} onClick={(e) => handleLinkClick(e, 'checkout')}>
+              Checkout {cartQuantity > 0 ? `[${cartQuantity} regrets]` : ''}
             </a>
           </li>
           <li>
@@ -144,12 +159,18 @@ export default function Navbar() {
           <button 
             onClick={() => setCookieBanner(false)} 
             onMouseEnter={(e) => {
-              // The close button shifts randomly when hovered
-              e.target.style.marginLeft = `${Math.random() * 200}px`;
+              if (cookieHoverCount < 3) {
+                // The close button shifts randomly when hovered up to 3 times
+                e.target.style.marginLeft = `${Math.random() * 200}px`;
+                setCookieHoverCount(prev => prev + 1);
+              } else {
+                // Return to normal
+                e.target.style.marginLeft = '10px';
+              }
             }}
-            style={{ marginLeft: '10px', background: '#000', color: '#fff', border: 'none', padding: '2px 8px', cursor: 'pointer' }}
+            style={{ marginLeft: '10px', background: '#000', color: '#fff', border: 'none', padding: '2px 8px', cursor: 'pointer', transition: 'all 0.1s ease' }}
           >
-            I Accept Everything Forever
+            {cookieHoverCount >= 3 ? 'Fine, Accept All Forever' : 'I Accept Everything Forever'}
           </button>
         </div>
       )}

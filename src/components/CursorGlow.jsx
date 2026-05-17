@@ -49,12 +49,12 @@ export default function CursorGlow() {
   }, [])
 
   // Trigger a native block if they lose their temper and shake the mouse too hard
-  useEffect(() => {
-    if (panicLevel >= 5) {
-      alert("⚠️ MOTION SICKNESS DETECTED: You are moving your mouse with excessive aggression. Please hold perfectly still for 10 seconds to stabilize your breakfast.")
-      setPanicLevel(0)
-    }
-  }, [panicLevel])
+  // useEffect(() => {
+  //   if (panicLevel >= 5) {
+  //     alert("⚠️ MOTION SICKNESS DETECTED: You are moving your mouse with excessive aggression. Please hold perfectly still for 10 seconds to stabilize your breakfast.")
+  //     setPanicLevel(0)
+  //   }
+  // }, [panicLevel])
 
   return (
     <>
@@ -68,11 +68,11 @@ export default function CursorGlow() {
           transform: 'translate(-50%, -50%)',
           zIndex: 9999,
           // Expand the glow radius based on how panicked the user is to block their view
-          width: `${150 + panicLevel * 60}px`,
-          height: `${150 + panicLevel * 60}px`,
-          background: panicLevel > 2 ? 'rgba(255, 0, 0, 0.25)' : 'rgba(200, 97, 42, 0.15)',
+          width: `${100 + panicLevel * 30}px`,
+          height: `${100 + panicLevel * 30}px`,
+          background: panicLevel > 2 ? 'rgba(155, 59, 59, 0.18)' : 'rgba(200, 97, 42, 0.07)',
           borderRadius: '50%',
-          filter: 'blur(40px)',
+          filter: 'blur(20px)',
           transition: 'width 0.2s, height 0.2s, background-color 0.2s',
         }}
       />
@@ -81,16 +81,17 @@ export default function CursorGlow() {
       <div
         style={{
           position: 'fixed',
-          left: `${lastPos.current.x + 30}px`,
-          top: `${lastPos.current.y + 40}px`,
+          left: `${lastPos.current.x + 20}px`,
+          top: `${lastPos.current.y + 25}px`,
           zIndex: 9998,
           pointerEvents: 'none',
-          fontSize: '0.65rem',
-          color: '#ff4d4d',
+          fontSize: '0.6rem',
+          color: '#e07a3a',
           background: '#1a1714',
-          padding: '2px 6px',
-          borderRadius: '4px',
-          opacity: panicLevel > 0 ? 0.8 : 0,
+          border: '1px solid rgba(255,255,255,0.06)',
+          padding: '3px 8px',
+          borderRadius: '3px',
+          opacity: panicLevel > 0 ? 0.75 : 0,
           transition: 'opacity 0.3s ease',
         }}
       >
