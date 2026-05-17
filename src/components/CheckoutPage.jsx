@@ -23,6 +23,37 @@ export default function CheckoutPage({ cart = [], setCart, navigateTo }) {
 
   const cardRefs = [useRef(), useRef(), useRef(), useRef()]
 
+  // Easter Egg States
+  const [clickCount, setClickCount] = useState(0)
+  const buttonTexts = [
+    "Initiate Stomach Demolition",
+    "Are you sure?",
+    "Really sure?",
+    "Financially stable?",
+    "Fine. Whatever."
+  ]
+
+  const [hoverFee, setHoverFee] = useState(0)
+  const [hoverFeeName, setHoverFeeName] = useState('')
+
+  const handleFeeHover = () => {
+    if (!hoverFee && Math.random() > 0.4) {
+      const fees = [
+        { name: "Breathing Fee", amount: 15 },
+        { name: "Emotional Damage Fee", amount: 200 },
+        { name: "Existing Fee", amount: 1 }
+      ]
+      const f = fees[Math.floor(Math.random() * fees.length)]
+      setHoverFee(f.amount)
+      setHoverFeeName(f.name)
+    }
+  }
+
+  const handleFeeLeave = () => {
+    setHoverFee(0)
+    setHoverFeeName('')
+  }
+
   // Out of order months to drive judges insane
   const CHAOTIC_MONTHS = [
     { value: '12', label: 'December (Cold)' },
@@ -111,10 +142,14 @@ export default function CheckoutPage({ cart = [], setCart, navigateTo }) {
 
   const discount = couponApplied ? 50 : 0
   const total = subtotal + trafficFee + inflationFee + therapyFee + airFee + 
-                surchargeFees.couponCharge + surchargeFees.happinessFine + surchargeFees.impatienceFee - discount
+                surchargeFees.couponCharge + surchargeFees.happinessFine + surchargeFees.impatienceFee - discount + hoverFee
 
   const handlePlaceOrder = (e) => {
     e.preventDefault()
+    if (clickCount < buttonTexts.length - 1) {
+      setClickCount(prev => prev + 1)
+      return
+    }
     if (!address || !phone || !cardName || cardNums.some(n => n.length < 4)) {
       alert("❌ Validation failure. Please fill in all required corporate compliance fields.")
       return
@@ -313,7 +348,7 @@ export default function CheckoutPage({ cart = [], setCart, navigateTo }) {
             type="submit" 
             className="cart-checkout-btn w-full bg-orange hover:bg-orange-light text-cream font-bold py-4 px-6 rounded-lg shadow-lg tracking-wide transition-colors uppercase text-sm mt-4 active:scale-[0.99]"
           >
-            Initiate Stomach Demolition
+            {buttonTexts[clickCount]}
           </button>
         </form>
 
@@ -327,7 +362,7 @@ export default function CheckoutPage({ cart = [], setCart, navigateTo }) {
             <span className="font-mono text-[9px] text-cream-dim/30 bg-charcoal px-2 py-0.5 rounded">SYS_REF // #8410</span>
           </div>
 
-          <div className="cart-fees space-y-2.5 font-mono text-xs text-cream-dim">
+          <div className="cart-fees space-y-2.5 font-mono text-xs text-cream-dim" onMouseEnter={handleFeeHover} onMouseLeave={handleFeeLeave}>
             <div className="cart-fee-row flex justify-between">
               <span>Items Total ({itemQuantity})</span>
               <span className="text-cream">₹{subtotal}</span>
@@ -372,6 +407,12 @@ export default function CheckoutPage({ cart = [], setCart, navigateTo }) {
               <div className="cart-fee-row penalty flex justify-between text-red-light font-bold bg-red/5 p-1.5 px-2 rounded border border-red/10 animate-pulse">
                 <span>Decision Reluctance Levy</span>
                 <span>+₹{surchargeFees.impatienceFee}</span>
+              </div>
+            )}
+            {hoverFee > 0 && (
+              <div className="cart-fee-row penalty flex justify-between text-red-light font-bold bg-red/5 p-1.5 px-2 rounded border border-red/10 animate-fade-in">
+                <span>{hoverFeeName}</span>
+                <span>+₹{hoverFee}</span>
               </div>
             )}
           </div>

@@ -27,6 +27,33 @@ export default function App() {
     return () => obs.disconnect()
   }, [currentPage])
 
+  // Konami Code Secret
+  useEffect(() => {
+    const konamiCode = [
+      'ArrowUp', 'ArrowUp', 'ArrowDown', 'ArrowDown',
+      'ArrowLeft', 'ArrowRight', 'ArrowLeft', 'ArrowRight',
+      'b', 'a'
+    ];
+    let konamiIndex = 0;
+
+    const handleKeyDown = (e) => {
+      // Allow lowercase or uppercase b/a
+      if (e.key.toLowerCase() === konamiCode[konamiIndex].toLowerCase()) {
+        konamiIndex++;
+        if (konamiIndex === konamiCode.length) {
+          document.body.classList.add('nightmare-mode');
+          alert("🚨 NIGHTMARE MODE ACTIVATED. MAY GOD HAVE MERCY ON YOUR SOUL.");
+          konamiIndex = 0;
+        }
+      } else {
+        konamiIndex = 0;
+      }
+    };
+
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, []);
+
   const navigateTo = (page) => {
     setPageLoading(true)
     const messages = [

@@ -18,6 +18,19 @@ body{
   font-family:var(--font-body);color:var(--cream);
   background:var(--bg);overflow-x:hidden;
   -webkit-font-smoothing:antialiased;
+  transition: filter 2s, transform 2s;
+}
+
+/* ===== NIGHTMARE MODE ===== */
+body.nightmare-mode {
+  animation: nightmareRotate 20s linear infinite;
+  filter: invert(1) hue-rotate(180deg) saturate(2);
+}
+
+@keyframes nightmareRotate {
+  0% { transform: rotate(0deg) scale(0.95); }
+  50% { transform: rotate(180deg) scale(0.7); }
+  100% { transform: rotate(360deg) scale(0.95); }
 }
 
 /* ===== GRAIN OVERLAY ===== */

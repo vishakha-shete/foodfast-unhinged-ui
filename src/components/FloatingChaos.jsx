@@ -57,6 +57,17 @@ const FLOATING_PRESETS = [
     styleClass: 'style-orange',
     x: '40%',
     y: '45%',
+  },
+  {
+    id: 'security-warning',
+    title: 'Security Alert',
+    icon: '🚨',
+    body: 'Suspicious hunger activity detected. Order confidence too low.',
+    btnText: 'I am starving',
+    btnPrimary: false,
+    styleClass: 'style-red',
+    x: '50%',
+    y: '80%',
   }
 ]
 
@@ -83,7 +94,7 @@ export default function FloatingChaos() {
   const [updateText, setUpdateText] = useState('NEW: Faster disappointment delivery now available.')
   const [updateAction, setUpdateAction] = useState('Optimize')
   const [activePopups, setActivePopups] = useState([])
-  const [cookieState, setCookieState] = useState('banner') // 'banner', 'pref', 'hidden'
+  const [cookieState, setCookieState] = useState('banner') // 'banner', 'pref', 'hidden', 'lied'
   const [sessionState, setSessionState] = useState('active') // 'active', 'prompt', 'logging-in', 'stuck', 'ssn'
   const [aiToasts, setAiToasts] = useState([])
   const [cursorText, setCursorText] = useState(CURSOR_TRAILS[0])
@@ -91,6 +102,10 @@ export default function FloatingChaos() {
   const [cookieAcceptPos, setCookieAcceptPos] = useState({ x: 0, y: 0 })
   const [loginInput, setLoginInput] = useState('')
   const [loginProgress, setLoginProgress] = useState(0)
+
+  // Chatbot State
+  const [chatOpen, setChatOpen] = useState(false)
+  const [chatMsg, setChatMsg] = useState("Need help?")
 
   const cookieContainerRef = useRef(null)
   const acceptBtnRef = useRef(null)
@@ -133,6 +148,34 @@ export default function FloatingChaos() {
     }, 18000)
 
     return () => clearInterval(interval)
+  }, [])
+
+  // Trigger Idle User Messages
+  useEffect(() => {
+    let idleTimer
+    const resetIdle = () => {
+      clearTimeout(idleTimer)
+      idleTimer = setTimeout(() => {
+        const idleMessages = ["Still here?", "We admire your patience.", "You seem uncertain."]
+        const msg = idleMessages[Math.floor(Math.random() * idleMessages.length)]
+        const id = Date.now()
+        setAiToasts(prev => [...prev, { title: 'System', icon: '👀', body: msg, id }])
+        
+        setTimeout(() => {
+          setAiToasts(prev => prev.filter(t => t.id !== id))
+        }, 5000)
+      }, 18000) // 18 seconds idle
+    }
+
+    window.addEventListener('mousemove', resetIdle)
+    window.addEventListener('keydown', resetIdle)
+    resetIdle()
+    
+    return () => {
+      window.removeEventListener('mousemove', resetIdle)
+      window.removeEventListener('keydown', resetIdle)
+      clearTimeout(idleTimer)
+    }
   }, [])
 
   // Trigger Session Expired Modal
@@ -247,7 +290,10 @@ export default function FloatingChaos() {
 
   // Cookie accept click (if they somehow click it!)
   const handleCookieAccept = () => {
-    setCookieState('pref')
+    setCookieState('lied')
+    setTimeout(() => {
+      setCookieState('hidden')
+    }, 4000)
   }
 
   // Invasive preferences accept
@@ -272,12 +318,28 @@ export default function FloatingChaos() {
           // Lock at 99.8% or advance to SSN state
           setTimeout(() => {
             setSessionState('ssn')
-          }, 1500)
+          }, 3500) // Give them time to read "close enough honestly"
           return 99.8
         }
         return prev + Math.random() * 15
       })
     }, 150)
+  }
+
+  // Fake AI Chatbot Interaction
+  const handleChatClick = () => {
+    if (!chatOpen) {
+      setChatOpen(true)
+      const chatResponses = [
+        "We usually don't.",
+        "Please contact your therapist.",
+        "AI predicted disappointment."
+      ]
+      setChatMsg(chatResponses[Math.floor(Math.random() * chatResponses.length)])
+    } else {
+      setChatOpen(false)
+      setTimeout(() => setChatMsg("Need help?"), 300)
+    }
   }
 
   return (
@@ -363,6 +425,19 @@ export default function FloatingChaos() {
         </div>
       )}
 
+      {/* Secret Cursed Cookie Message */}
+      {cookieState === 'lied' && (
+        <div className="chaos-cookie-banner" style={{ border: '2px solid var(--charcoal-light)' }}>
+          <div className="chaos-cookie-title">
+            <span>🍪</span>
+            Cookie Directive
+          </div>
+          <div className="chaos-cookie-body">
+            There were no cookies.
+          </div>
+        </div>
+      )}
+
       {/* 4. Secondary invasive preferences popup */}
       {cookieState === 'pref' && (
         <div className="chaos-cookie-banner" style={{ border: '2px solid var(--red)' }}>
@@ -434,6 +509,11 @@ export default function FloatingChaos() {
               </div>
               <div className="chaos-expired-body">
                 Re-encrypting local storage keys with low security standards...
+                {loginProgress > 98 && (
+                  <div style={{ marginTop: '8px', color: 'var(--olive)', fontFamily: 'var(--font-mono)', fontSize: '0.65rem' }}>
+                    close enough honestly
+                  </div>
+                )}
               </div>
               <div className="ph-loading" style={{ marginTop: '20px' }}>
                 <span style={{ fontSize: '0.6rem' }}>Progress: {loginProgress.toFixed(1)}%</span>
@@ -519,6 +599,57 @@ export default function FloatingChaos() {
           {cursorText}
         </div>
       )}
+
+      {/* 8. Fake AI Chatbot in Corner */}
+      <div style={{ position: 'fixed', bottom: '24px', left: '24px', zIndex: 10000, display: 'flex', flexDirection: 'column', gap: '12px', alignItems: 'flex-start' }}>
+        {chatOpen && (
+           <div style={{ 
+              background: 'var(--charcoal)', 
+              border: '1px solid var(--charcoal-light)', 
+              padding: '12px 16px', 
+              borderRadius: '8px 8px 8px 2px', 
+              fontFamily: 'var(--font-body)',
+              fontSize: '0.8rem', 
+              color: 'var(--cream)', 
+              boxShadow: '0 8px 20px rgba(0,0,0,0.5)', 
+              maxWidth: '220px',
+              animation: 'modalPop 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards'
+           }}>
+             <div style={{ fontSize: '0.6rem', color: 'var(--cream-dim)', opacity: 0.6, marginBottom: '4px', textTransform: 'uppercase', fontFamily: 'var(--font-mono)' }}>AI Assistant</div>
+             {chatMsg}
+           </div>
+        )}
+        <button 
+          onClick={handleChatClick} 
+          style={{ 
+            background: 'var(--bg-card)', 
+            color: 'var(--cream)', 
+            border: '2px solid var(--charcoal-light)', 
+            borderRadius: '50%', 
+            width: '52px', 
+            height: '52px', 
+            cursor: 'pointer', 
+            display: 'flex', 
+            alignItems: 'center', 
+            justifyContent: 'center', 
+            fontSize: '1.4rem', 
+            boxShadow: '0 8px 20px rgba(0,0,0,0.4)', 
+            transition: 'all 0.2s ease',
+            opacity: 0.85
+          }} 
+          onMouseOver={(e)=>{
+            e.currentTarget.style.transform='scale(1.05)';
+            e.currentTarget.style.borderColor='var(--orange)';
+            e.currentTarget.style.opacity='1';
+          }} 
+          onMouseOut={(e)=>{
+            e.currentTarget.style.transform='scale(1)';
+            e.currentTarget.style.borderColor='var(--charcoal-light)';
+            e.currentTarget.style.opacity='0.85';
+          }}>
+          🤖
+        </button>
+      </div>
     </>
   )
 }

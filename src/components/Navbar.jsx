@@ -85,17 +85,17 @@ export default function Navbar({ currentPage, setCurrentPage, cart = [] }) {
         {/* Links that actually navigate but with cursed flavor */}
         <ul className="nav-links">
           <li>
-            <a href="#home" className={currentPage === 'home' ? 'active' : ''} onClick={(e) => handleLinkClick(e, 'home')}>
+            <a href="#home" className={currentPage === 'home' ? 'active' : ''} onClick={(e) => { handleLinkClick(e, 'home'); alert("bold assumption that this is safe"); }}>
               Home
             </a>
           </li>
           <li>
-            <a href="#menu" className={currentPage === 'menu' ? 'active' : ''} onClick={(e) => handleLinkClick(e, 'menu')}>
+            <a href="#menu" className={currentPage === 'menu' ? 'active' : ''} onClick={(e) => { handleLinkClick(e, 'menu'); alert("interesting choice"); }}>
               Cursed Menu
             </a>
           </li>
           <li>
-            <a href="#checkout" className={currentPage === 'checkout' ? 'active' : ''} onClick={(e) => handleLinkClick(e, 'checkout')}>
+            <a href="#checkout" className={currentPage === 'checkout' ? 'active' : ''} onClick={(e) => { handleLinkClick(e, 'checkout'); alert("we wouldn't recommend that"); }}>
               Checkout {cartQuantity > 0 ? `[${cartQuantity} regrets]` : ''}
             </a>
           </li>

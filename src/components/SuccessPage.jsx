@@ -27,7 +27,7 @@ export default function SuccessPage({ navigateTo, setCart }) {
       'Driver saw a beautiful cloud and stopped to appreciate it. ETA: Irrelevant.',
       'Driver has entered a different dimension. ETA: Calculating quantum variables.',
       'Driver stopped to buy a lottery ticket. If they win, you will definitely not get your food.',
-      'Driver reported that the vibes on the highway are "harsh". Currently taking back roads.',
+      'Driver started questioning capitalism.',
       'Driver is eating a fry from your container to test for quality assurance. Approved!'
     ]
 
