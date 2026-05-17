@@ -72,20 +72,9 @@ export default function Navbar({ currentPage, setCurrentPage, cart = [] }) {
         className="nav"
         style={{
           transition: 'all 0.3s ease',
-          transform: invert ? 'rotateX(180deg)' : 'none', // Flips the navbar upside down
-          ...(scrolled
-            ? {
-                borderBottomColor: 'rgba(200,97,42,.15)',
-                background: 'rgba(26,23,20,.92)',
-                position: 'fixed',
-                top: 'auto',
-                bottom: 0, // CRIME: Moves to the bottom of the screen when scrolling!
-              }
-            : {
-                position: 'fixed',
-                top: 0,
-                bottom: 'auto', // Fix vertical stretching bug where top: 0 and bottom: 0 were active simultaneously!
-              }),
+          transform: `${invert ? 'rotateX(180deg)' : ''} ${scrolled ? 'translateY(calc(100vh - 100%))' : 'translateY(0)'}`,
+          borderBottomColor: scrolled ? 'rgba(200,97,42,.15)' : 'rgba(200,97,42,.12)',
+          background: scrolled ? 'rgba(26,23,20,.92)' : 'rgba(26,23,20,.94)',
         }}
       >
         {/* Logo that lies */}
