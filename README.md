@@ -23,13 +23,18 @@ it begins psychologically attacking the user 😭🔥
 
 ## 💻 GitHub Repository
 
-[FoodFast GitHub Repo](https://github.com/vishakha-shete/foodfast)
+[FoodFast GitHub Repo](https://github.com/vishakha-shete/foodfast-unhinged-ui)
 
 ## 🎥 Demo Video
 
 ```txt id="v5m8qx"
 https://drive.google.com/file/d/100RWTuPgRQYGMcHFE3ZUUTlwrapBPUiG/view?usp=drivesdk
 ```
+
+
+# 🥚 Hidden Easter Eggs
+
+[ Easter-Eggs](https://github.com/vishakha-shete/foodfast-unhinged-ui/blob/main/EASTER_EGGS.md)
 
 ---
 
@@ -175,6 +180,8 @@ Random notifications appear:
 ---
 
 # 🥚 Hidden Easter Eggs
+
+[ Easter-Eggs](https://github.com/vishakha-shete/foodfast-unhinged-ui/blob/main/EASTER_EGGS.md)
 
 ## 🚨 NIGHTMARE MODE
 
