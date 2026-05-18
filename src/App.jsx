@@ -14,6 +14,9 @@ import SuccessPage from './components/SuccessPage'
 import SoundEmoji from './components/SoundEmoji'
 import GatewayPage from './components/GatewayPage'
 
+import CursedMusicPlayer from './components/CursedMusicPlayer'
+import FakeAIBot from './components/aimessage'
+
 export default function App() {
   const [currentPage, setCurrentPage] = useState('gateway')
   const [cart, setCart] = useState([])
@@ -68,7 +71,7 @@ export default function App() {
       'Verifying creditworthiness with generic synthetics...'
     ]
     setLoadingMessage(messages[Math.floor(Math.random() * messages.length)])
-    
+
     setTimeout(() => {
       setCurrentPage(page)
       setPageLoading(false)
@@ -80,14 +83,16 @@ export default function App() {
     <>
       <CursorGlow />
       <SoundEmoji />
-      
+      <CursedMusicPlayer active={currentPage !== 'gateway'} />
+
       {currentPage === 'gateway' ? (
         <GatewayPage onEnter={() => navigateTo('home')} />
+
       ) : (
         <>
           <FloatingChaos />
           <Navbar currentPage={currentPage} setCurrentPage={navigateTo} cart={cart} />
-          
+
           {pageLoading && (
             <div className="chaos-page-loader">
               <div className="chaos-page-loader-spinner"></div>
@@ -123,6 +128,9 @@ export default function App() {
             <>
               <SuccessPage navigateTo={navigateTo} setCart={setCart} />
             </>
+          )}
+          {currentPage !== 'gateway' && (
+            <FakeAIBot />
           )}
         </>
       )}
