@@ -1,4 +1,4 @@
-import React, { useState, useRef } from 'react'
+import React, { useState, useRef, useEffect } from 'react'
 import { dispatchEmoji } from './SoundEmoji'
 
 export default function CheckoutPage({ cart = [], setCart, navigateTo }) {
@@ -7,13 +7,23 @@ export default function CheckoutPage({ cart = [], setCart, navigateTo }) {
   const [couponCode, setCouponCode] = useState('')
   const [couponApplied, setCouponApplied] = useState(false)
   const [couponFeeApplied, setCouponFeeApplied] = useState(false)
+  
+  // Confusing Payment States
+  const [paymentMethod, setPaymentMethod] = useState('card')
+  const [codDenomination, setCodDenomination] = useState('2000')
+  const [iouRegret, setIouRegret] = useState('')
+  const [cryptoConnecting, setCryptoConnecting] = useState(false)
+  
   const [cardName, setCardName] = useState('')
   const [cardNums, setCardNums] = useState(['', '', '', ''])
   const [expiryMonth, setExpiryMonth] = useState('12') // Default out of order
   const [expiryYear, setExpiryYear] = useState('2032')
   
+  // Dynamic Small Fees
+  const [dynamicFees, setDynamicFees] = useState([])
+  
   // Modal states
-  const [activeModal, setActiveModal] = useState(null) // 'verification' | 'confirm'
+  const [activeModal, setActiveModal] = useState(null) // 'verification' | 'confirm-1' | 'confirm-2' | 'confirm-3' | 'security-check'
   const [selectedEmojis, setSelectedEmojis] = useState([])
   const [surchargeFees, setSurchargeFees] = useState({
     couponCharge: 0,
@@ -21,7 +31,23 @@ export default function CheckoutPage({ cart = [], setCart, navigateTo }) {
     impatienceFee: 0,
   })
 
+  // Evasion states
+  const [evadesCount, setEvadesCount] = useState(0)
+  const [orderButtonStyle, setOrderButtonStyle] = useState({
+    position: 'relative',
+    left: '0px',
+    top: '0px'
+  })
+
+  // Security Scanner States
+  const [securityText, setSecurityText] = useState('Scanning your hunger...')
+  const [securityProgress, setSecurityProgress] = useState(0)
+
+  // Random Alert States
+  const [randomAlert, setRandomAlert] = useState(null)
+
   const cardRefs = [useRef(), useRef(), useRef(), useRef()]
+  const orderBtnRef = useRef()
 
   // Easter Egg States
   const [clickCount, setClickCount] = useState(0)
@@ -79,6 +105,39 @@ export default function CheckoutPage({ cart = [], setCart, navigateTo }) {
     { id: 4, emoji: '🤡', caption: 'Frontend developer' },
   ]
 
+  // Random dynamic fees added continuously on interaction
+  const addDynamicFee = (name, amount) => {
+    setDynamicFees(prev => {
+      if (prev.some(f => f.name === name)) return prev
+      return [...prev, { name, amount }]
+    })
+  }
+
+  // Trigger random alert popups to distract the user
+  useEffect(() => {
+    const alerts = [
+      "⚠️ DANGER: 4 people are regretting their checkout choice on this exact server node.",
+      "⚡ FLASH SALE: Decline checking out now to receive an immediate ₹1 convenience fee reduction penalty!",
+      "🔥 URGENT: The kitchen is running out of Soggy Fries! Buy 2 more to ensure driver safety.",
+      "🤡 NOTICE: Managing director has requested an extra ₹15 'Convenience Levy' to support his golf tournament.",
+      "💸 ALERT: Inflation has emotionally increased by 0.4% in the last 12 seconds."
+    ]
+
+    const triggerAlert = () => {
+      const randomText = alerts[Math.floor(Math.random() * alerts.length)]
+      setRandomAlert(randomText)
+      setTimeout(() => setRandomAlert(null), 5000)
+    }
+
+    const timer = setInterval(() => {
+      if (!activeModal && Math.random() > 0.3) {
+        triggerAlert()
+      }
+    }, 15000)
+
+    return () => clearInterval(timer)
+  }, [activeModal])
+
   // Auto-correct address to something beautifully cursed
   const handleAddressBlur = () => {
     if (!address) return
@@ -91,6 +150,7 @@ export default function CheckoutPage({ cart = [], setCart, navigateTo }) {
     const randomSuffix = cursedSuffixes[Math.floor(Math.random() * cursedSuffixes.length)]
     if (!address.includes('(')) {
       setAddress(prev => prev + randomSuffix)
+      addDynamicFee("Labyrinth Routing Overhead", 35)
     }
   }
 
@@ -99,6 +159,7 @@ export default function CheckoutPage({ cart = [], setCart, navigateTo }) {
     if (!phone) return
     if (!phone.startsWith('+')) {
       setPhone(`+880 (Suspicious) ${phone}`)
+      addDynamicFee("Pre-emptive Spam Filtering Fee", 19)
     }
   }
 
@@ -123,15 +184,23 @@ export default function CheckoutPage({ cart = [], setCart, navigateTo }) {
   }
 
   const applyCoupon = (e) => {
-    if (couponCode.toUpperCase() === 'SORRY50' || couponCode.toUpperCase() === 'DISAPPOINTMENT50') {
+    if (couponCode.toUpperCase() === 'SORRYBRO') {
       setCouponApplied(true)
-      setSurchargeFees(prev => ({ ...prev, couponCharge: 75 }))
+      setSurchargeFees(prev => ({ ...prev, couponCharge: 120 }))
       setCouponFeeApplied(true)
+      dispatchEmoji('success', e)
+      alert("🎟️ Coupon applied successfully! ₹99 discount registered.\n\nNote: A ₹120 coupon validation processing surcharge has been added to cover the database index read cost.")
+    } else if (['SORRY50', 'DISAPPOINTMENT50'].includes(couponCode.toUpperCase())) {
       dispatchEmoji('fail', e)
-      alert("🎟️ Coupon applied successfully! ₹50 discount registered.\n\nNote: A ₹75 coupon validation processing surcharge has been added to cover the database index read cost.")
+      alert("❌ Coupon Code EXPIRED: Redeemed by someone else in 2022. Try again or pay full price.")
     } else {
       dispatchEmoji('fail', e)
-      alert("❌ Coupon Code not found in our directory of sorry gestures. Please try 'SORRY50' or admit defeat.")
+      const fails = [
+        `❌ Coupon Code '${couponCode}' already emotionally redeemed by another user.`,
+        `❌ Coupon Code '${couponCode}' FAILED: Database indicates your coupon has been deemed too optimistic for our dark kitchen.`,
+        `❌ Coupon Code '${couponCode}' INVALID: Sarcasm threshold not reached.`
+      ]
+      alert(fails[Math.floor(Math.random() * fails.length)])
     }
   }
 
@@ -143,9 +212,52 @@ export default function CheckoutPage({ cart = [], setCart, navigateTo }) {
   const airFee = itemQuantity > 0 ? 50 : 0
   const trafficFee = 185
 
-  const discount = couponApplied ? 50 : 0
+  const discount = couponApplied ? 99 : 0
+  const dynamicTotal = dynamicFees.reduce((acc, f) => acc + f.amount, 0)
   const total = subtotal + trafficFee + inflationFee + therapyFee + airFee + 
-                surchargeFees.couponCharge + surchargeFees.happinessFine + surchargeFees.impatienceFee - discount + hoverFee
+                surchargeFees.couponCharge + surchargeFees.happinessFine + surchargeFees.impatienceFee - discount + hoverFee + dynamicTotal
+
+  // Evasive Place Order Button Logic
+  const handleOrderButtonMouseMove = (e) => {
+    if (evadesCount >= 2) {
+      // Bypassed! Let them click it.
+      return
+    }
+
+    const btn = orderBtnRef.current
+    if (!btn) return
+
+    const rect = btn.getBoundingClientRect()
+    const btnCenterX = rect.left + rect.width / 2
+    const btnCenterY = rect.top + rect.height / 2
+
+    const distX = e.clientX - btnCenterX
+    const distY = e.clientY - btnCenterY
+
+    // If mouse gets close, the button flees!
+    if (Math.abs(distX) < 100 && Math.abs(distY) < 60) {
+      setEvadesCount(prev => prev + 1)
+      const escapeX = distX > 0 ? -90 : 90
+      const escapeY = distY > 0 ? -50 : 50
+
+      setOrderButtonStyle({
+        position: 'relative',
+        left: `${escapeX}px`,
+        top: `${escapeY}px`,
+        transition: 'all 0.15s ease-out'
+      })
+      dispatchEmoji('bonk', e)
+    }
+  }
+
+  const handleOrderButtonMouseLeave = () => {
+    setOrderButtonStyle({
+      position: 'relative',
+      left: '0px',
+      top: '0px',
+      transition: 'all 0.3s ease-in'
+    })
+  }
 
   const handlePlaceOrder = (e) => {
     e.preventDefault()
@@ -153,8 +265,16 @@ export default function CheckoutPage({ cart = [], setCart, navigateTo }) {
       setClickCount(prev => prev + 1)
       return
     }
-    if (!address || !phone || !cardName || cardNums.some(n => n.length < 4)) {
-      alert("❌ Validation failure. Please fill in all required corporate compliance fields.")
+    if (!address || !phone) {
+      alert("❌ Address and phone number required.")
+      return
+    }
+    if (paymentMethod === 'card' && (!cardName || cardNums.some(n => n.length < 4))) {
+      alert("❌ Card authorization fields invalid.")
+      return
+    }
+    if (paymentMethod === 'iou' && !iouRegret) {
+      alert("❌ IOU requires an emotional sacrifice/regret in the input.")
       return
     }
     setActiveModal('verification')
@@ -169,12 +289,48 @@ export default function CheckoutPage({ cart = [], setCart, navigateTo }) {
   const handleVerificationSubmit = () => {
     // All options are inherently depressing, triggering an immediate emotional fine
     setSurchargeFees(prev => ({ ...prev, happinessFine: 120 }))
-    setActiveModal('confirm')
+    setActiveModal('confirm-1')
   }
 
-  const completeOrder = (e) => {
-    dispatchEmoji('success', e)
-    setActiveModal(null)
+  // Fake security scanner progression
+  useEffect(() => {
+    if (activeModal !== 'security-check') return
+
+    setSecurityProgress(0)
+    setSecurityText('Scanning hunger vector...')
+
+    const intervals = [
+      { progress: 20, text: 'Evaluating credit limit boundaries...', delay: 800 },
+      { progress: 45, text: 'Estimating carbon offset of cold burger transport...', delay: 1600 },
+      { progress: 65, text: 'Consulting digital kitchen therapist...', delay: 2400 },
+      { progress: 85, text: 'Encrypting food guilt credentials...', delay: 3200 },
+      { progress: 100, text: 'Finalizing ledger transaction...', delay: 4000 }
+    ]
+
+    const timers = intervals.map(step => {
+      return setTimeout(() => {
+        setSecurityProgress(step.progress)
+        setSecurityText(step.text)
+        // Play procedure noises!
+        const synthEvents = ['nice', 'squeak', 'bruh']
+        const randomSynth = synthEvents[Math.floor(Math.random() * synthEvents.length)]
+        dispatchEmoji(randomSynth, null)
+      }, step.delay)
+    })
+
+    const finalTimer = setTimeout(() => {
+      // Done scanning! Complete the actual checkout.
+      completeOrder()
+    }, 4500)
+
+    return () => {
+      timers.forEach(clearTimeout)
+      clearTimeout(finalTimer)
+    }
+  }, [activeModal])
+
+  const completeOrder = () => {
+    // Save receipts
     window.finalReceipt = {
       cart: [...cart],
       fees: {
@@ -251,106 +407,187 @@ export default function CheckoutPage({ cart = [], setCart, navigateTo }) {
             </div>
           </div>
 
-          {/* STEP 2: COUPON TAX TRAP */}
-          <div className="space-y-4">
-            <div className="checkout-step-title flex items-center gap-3 border-b border-charcoal pb-2">
-              <span className="checkout-step-num font-mono text-xs bg-olive/20 text-olive px-2 py-0.5 rounded border border-olive/30">Step 2</span>
-              <span className="font-display font-bold text-lg">Broken Coupon Gateway</span>
-            </div>
-            
-            <div className="checkout-field flex flex-col gap-1.5">
-              <label className="checkout-label text-xs font-mono text-cream-dim/70">Enter 'SORRY50' or another formal gesture of defeat</label>
-              <div className="coupon-area flex gap-2">
-                <input
-                  type="text"
-                  className="checkout-input bg-charcoal border border-charcoal-light rounded p-3 text-sm focus:border-orange outline-none transition-colors flex-1"
-                  placeholder="e.g. SORRY50"
-                  value={couponCode}
-                  onChange={(e) => setCouponCode(e.target.value)}
-                />
-                <button 
-                  type="button" 
-                  className="coupon-btn bg-charcoal-light hover:bg-orange border border-charcoal px-5 py-3 rounded text-sm transition-all font-semibold active:scale-[0.98]"
-                  onClick={applyCoupon}
-                >
-                  Apply Guilt
-                </button>
-              </div>
-              <span className="btn-tiny-label font-mono text-[9px] text-cream-dim/30 mt-1 block">
-                * coupon execution cycles may initiate direct platform computational overhead penalties.
-              </span>
-            </div>
-          </div>
-
-          {/* STEP 3: HIGH-STRESS CARD COMPLIANCE */}
+          {/* STEP 3: CONFUSING PAYMENT FLOW */}
           <div className="space-y-4">
             <div className="checkout-step-title flex items-center gap-3 border-b border-charcoal pb-2">
               <span className="checkout-step-num font-mono text-xs bg-orange/20 text-orange-light px-2 py-0.5 rounded border border-orange/30">Step 3</span>
-              <span className="font-display font-bold text-lg">Confusing Card Interface</span>
+              <span className="font-display font-bold text-lg">Confusing Payment Flow</span>
             </div>
             
-            <div className="checkout-input-grid grid grid-cols-1 md:grid-cols-2 gap-4">
-              <div className="checkout-field md:col-span-2 flex flex-col gap-1.5">
-                <label className="checkout-label text-xs font-mono text-cream-dim/70">Full Name on Card (shared with dynamic retail networks)</label>
-                <input
-                  type="text"
-                  required
-                  className="checkout-input bg-charcoal border border-charcoal-light rounded p-3 text-sm focus:border-orange outline-none transition-colors w-full"
-                  placeholder="e.g. Priya Mukherjee"
-                  value={cardName}
-                  onChange={(e) => setCardName(e.target.value)}
-                />
-              </div>
-              
-              <div className="checkout-field md:col-span-2 flex flex-col gap-1.5">
-                <label className="checkout-label text-xs font-mono text-cream-dim/70">Card Number (Blocks of 4 — Quantum Alignment Jumps Active)</label>
-                <div className="card-number-fields grid grid-cols-4 gap-2">
-                  {cardNums.map((num, i) => (
-                    <input
-                      key={i}
-                      ref={cardRefs[i]}
-                      type="text"
-                      required
-                      placeholder="0000"
-                      className="checkout-input bg-charcoal border border-charcoal-light rounded p-3 text-center font-mono text-sm focus:border-orange outline-none transition-colors"
-                      value={num}
-                      onChange={(e) => handleCardChange(i, e.target.value)}
-                    />
-                  ))}
+            {/* Payment Selector Tabs */}
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-2 mb-4">
+              {[
+                { id: 'card', name: 'Credit Card', emoji: '💳', tooltip: 'Forces high-stress chaotic auto-jumps' },
+                { id: 'cod', name: 'Indian Rupee Cash', emoji: '💵', tooltip: 'Requires physical bank verification down to the paisa' },
+                { id: 'iou', name: 'Existential IOU', emoji: '✍️', tooltip: 'Trade a childhood regret for food ledger authorization' },
+                { id: 'crypto', name: 'Solana/NFT', emoji: '🪙', tooltip: 'Connecting wallet since 2021 (Extremely buggy)' }
+              ].map(method => (
+                <button
+                  key={method.id}
+                  type="button"
+                  className={`p-3 rounded border text-center transition-all cursor-pointer relative group select-none ${
+                    paymentMethod === method.id 
+                      ? 'border-orange bg-orange/10 text-orange-light font-bold scale-[1.02]' 
+                      : 'border-charcoal-light bg-charcoal text-cream-dim hover:border-charcoal hover:bg-charcoal-light/50'
+                  }`}
+                  onClick={(e) => {
+                    dispatchEmoji('random_click', e)
+                    setPaymentMethod(method.id)
+                    addDynamicFee("Payment Method Interlocution Fine", 15)
+                  }}
+                >
+                  <div className="text-xl mb-1">{method.emoji}</div>
+                  <div className="font-display text-xs">{method.name}</div>
+                  {/* Tooltip */}
+                  <div className="absolute bottom-full left-1/2 transform -translate-x-1/2 mb-2 w-48 p-2 bg-charcoal border border-charcoal-light rounded text-[10px] text-cream-dim font-mono leading-tight opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none shadow-xl z-20">
+                    {method.tooltip}
+                  </div>
+                </button>
+              ))}
+            </div>
+
+            {/* Conditional payment forms */}
+            {paymentMethod === 'card' && (
+              <div className="checkout-input-grid grid grid-cols-1 md:grid-cols-2 gap-4 border border-charcoal-light p-4 rounded bg-charcoal/20">
+                <div className="checkout-field md:col-span-2 flex flex-col gap-1.5">
+                  <label className="checkout-label text-xs font-mono text-cream-dim/70">Full Name on Card (shared with dynamic retail networks)</label>
+                  <input
+                    type="text"
+                    required
+                    className="checkout-input bg-charcoal border border-charcoal-light rounded p-3 text-sm focus:border-orange outline-none transition-colors w-full"
+                    placeholder="e.g. Priya Mukherjee"
+                    value={cardName}
+                    onChange={(e) => setCardName(e.target.value)}
+                  />
+                </div>
+                
+                <div className="checkout-field md:col-span-2 flex flex-col gap-1.5">
+                  <label className="checkout-label text-xs font-mono text-cream-dim/70">Card Number (Blocks of 4 — Quantum Alignment Jumps Active)</label>
+                  <div className="card-number-fields grid grid-cols-4 gap-2">
+                    {cardNums.map((num, i) => (
+                      <input
+                        key={i}
+                        ref={cardRefs[i]}
+                        type="text"
+                        required
+                        placeholder="0000"
+                        className="checkout-input bg-charcoal border border-charcoal-light rounded p-3 text-center font-mono text-sm focus:border-orange outline-none transition-colors"
+                        value={num}
+                        onChange={(e) => handleCardChange(i, e.target.value)}
+                      />
+                    ))}
+                  </div>
+                </div>
+
+                <div className="checkout-field flex flex-col gap-1.5">
+                  <label className="checkout-label text-xs font-mono text-cream-dim/70">Expiry Month (Chaotic Sorting Matrix)</label>
+                  <select 
+                    className="checkout-input bg-charcoal border border-charcoal-light rounded p-3 text-sm focus:border-orange outline-none transition-colors w-full cursor-pointer" 
+                    value={expiryMonth}
+                    onChange={(e) => {
+                      setExpiryMonth(e.target.value)
+                      addDynamicFee("Chaotic Sorting Calculation Tax", 25)
+                    }}
+                  >
+                    {CHAOTIC_MONTHS.map(m => (
+                      <option key={m.value} value={m.value} className="bg-bg-card">{m.label}</option>
+                    ))}
+                  </select>
+                </div>
+
+                <div className="checkout-field flex flex-col gap-1.5">
+                  <label className="checkout-label text-xs font-mono text-cream-dim/70">Expiry Year</label>
+                  <select 
+                    className="checkout-input bg-charcoal border border-charcoal-light rounded p-3 text-sm focus:border-orange outline-none transition-colors w-full cursor-pointer"
+                    value={expiryYear}
+                    onChange={(e) => setExpiryYear(e.target.value)}
+                  >
+                    <option value="2032" className="bg-bg-card">2032 (Optimistic)</option>
+                    <option value="2033" className="bg-bg-card">2033 (Unlikely)</option>
+                    <option value="2034" className="bg-bg-card">2034 (Solar Flare Decompression)</option>
+                  </select>
                 </div>
               </div>
+            )}
 
-              <div className="checkout-field flex flex-col gap-1.5">
-                <label className="checkout-label text-xs font-mono text-cream-dim/70">Expiry Month (Chaotic Sorting Matrix)</label>
-                <select 
-                  className="checkout-input bg-charcoal border border-charcoal-light rounded p-3 text-sm focus:border-orange outline-none transition-colors w-full cursor-pointer" 
-                  value={expiryMonth}
-                  onChange={(e) => setExpiryMonth(e.target.value)}
-                >
-                  {CHAOTIC_MONTHS.map(m => (
-                    <option key={m.value} value={m.value} className="bg-bg-card">{m.label}</option>
-                  ))}
-                </select>
+            {paymentMethod === 'cod' && (
+              <div className="border border-charcoal-light p-4 rounded bg-charcoal/20 space-y-4 font-mono text-xs text-cream-dim">
+                <div className="text-orange-light font-bold">⚠️ Indian Rupee Cash-on-Delivery Compliance Matrix</div>
+                <p>Our routing drivers do not carry physical change, mathematical compasses, or positive life attitudes.</p>
+                
+                <div className="checkout-field flex flex-col gap-1.5">
+                  <label className="checkout-label text-xs text-cream-dim/70">Choose note denomination to authorize physical currency authentication:</label>
+                  <select
+                    className="checkout-input bg-charcoal border border-charcoal-light rounded p-3 text-sm focus:border-orange outline-none transition-colors w-full cursor-pointer text-cream"
+                    value={codDenomination}
+                    onChange={(e) => {
+                      setCodDenomination(e.target.value)
+                      if (e.target.value === '2000') {
+                        alert("🚨 DEMONETIZATION PROTOCOL: The ₹2000 denomination note is no longer legal tender. Appending physical note verification fine (₹150) to total invoice.")
+                        addDynamicFee("Demonetized Currency Fine", 150)
+                      } else {
+                        addDynamicFee("Cash Transport Levy", 45)
+                      }
+                    }}
+                  >
+                    <option value="2000" className="bg-bg-card">₹2,000 (Slightly demonetized, questionable)</option>
+                    <option value="500" className="bg-bg-card">₹500 (Requires clean surface for scanning)</option>
+                    <option value="exact" className="bg-bg-card">Exact change down to the paisa (Driver will verify with tweezers)</option>
+                  </select>
+                </div>
               </div>
+            )}
 
-              <div className="checkout-field flex flex-col gap-1.5">
-                <label className="checkout-label text-xs font-mono text-cream-dim/70">Expiry Year</label>
-                <select 
-                  className="checkout-input bg-charcoal border border-charcoal-light rounded p-3 text-sm focus:border-orange outline-none transition-colors w-full cursor-pointer"
-                  value={expiryYear}
-                  onChange={(e) => setExpiryYear(e.target.value)}
-                >
-                  <option value="2032" className="bg-bg-card">2032 (Optimistic)</option>
-                  <option value="2033" className="bg-bg-card">2033 (Unlikely)</option>
-                  <option value="2034" className="bg-bg-card">2034 (Solar Flare Decompression)</option>
-                </select>
+            {paymentMethod === 'iou' && (
+              <div className="border border-charcoal-light p-4 rounded bg-charcoal/20 space-y-4">
+                <div className="text-orange-light font-mono text-xs font-bold">✍️ Existential IOU Authorization Ledgers</div>
+                <p className="font-mono text-[10px] text-cream-dim">To trade your emotional regret for food, describe in vivid details one choice you made in middle school that still keeps you awake at 3:00 AM.</p>
+                
+                <div className="checkout-field flex flex-col gap-1.5">
+                  <textarea
+                    className="checkout-input bg-charcoal border border-charcoal-light rounded p-3 text-sm focus:border-orange outline-none transition-colors w-full h-24 font-sans text-cream resize-none"
+                    placeholder="e.g. I laughed at my teacher's toupee and then realized she was crying..."
+                    value={iouRegret}
+                    onChange={(e) => setIouRegret(e.target.value)}
+                    onBlur={() => addDynamicFee("Existential Regret Validation Fine", 75)}
+                  />
+                </div>
               </div>
-            </div>
+            )}
+
+            {paymentMethod === 'crypto' && (
+              <div className="border border-charcoal-light p-4 rounded bg-charcoal/20 space-y-4 text-center py-8">
+                <div className="text-xl">🪙</div>
+                <div className="text-orange-light font-mono text-xs font-bold">Connecting Solana Wallet...</div>
+                <p className="font-mono text-[10px] text-cream-dim max-w-sm mx-auto">Solana gas fee dynamic estimation active. Current network congestion requires consistent click cycles to maintain pipeline sync.</p>
+                
+                <button
+                  type="button"
+                  className="px-4 py-2 bg-charcoal border border-charcoal-light hover:border-orange rounded text-xs font-mono font-bold transition-all inline-block hover:scale-[1.02]"
+                  onClick={(e) => {
+                    dispatchEmoji('random_click', e)
+                    setCryptoConnecting(true)
+                    addDynamicFee("Solana Pipeline Sync Fine", 200)
+                    setTimeout(() => {
+                      setCryptoConnecting(false)
+                      alert("❌ Solana RPC connection dropped. Network indicates dynamic emotional balance was too low to process NFT gas.")
+                    }, 1800)
+                  }}
+                  disabled={cryptoConnecting}
+                >
+                  {cryptoConnecting ? 'Pipelining ledger...' : 'Trigger Wallet Connection (Gas: ₹200)'}
+                </button>
+              </div>
+            )}
           </div>
 
           <button 
+            ref={orderBtnRef}
             type="submit" 
-            className="cart-checkout-btn w-full bg-orange hover:bg-orange-light text-cream font-bold py-4 px-6 rounded-lg shadow-lg tracking-wide transition-colors uppercase text-sm mt-4 active:scale-[0.99]"
+            className="cart-checkout-btn w-full bg-orange hover:bg-orange-light text-cream font-bold py-4 px-6 rounded-lg shadow-lg tracking-wide transition-colors uppercase text-sm mt-4 select-none cursor-pointer"
+            style={orderButtonStyle}
+            onMouseMove={handleOrderButtonMouseMove}
+            onMouseLeave={handleOrderButtonMouseLeave}
             onMouseEnter={(e) => dispatchEmoji('hover', e)}
           >
             {buttonTexts[clickCount]}
@@ -392,7 +629,7 @@ export default function CheckoutPage({ cart = [], setCart, navigateTo }) {
             {/* DYNAMIC INTERACTIVE PENALTY STACKS */}
             {couponApplied && (
               <div className="cart-fee-row flex justify-between text-olive font-semibold bg-olive/5 p-1.5 px-2 rounded border border-olive/10">
-                <span>Coupon Applied ('SORRY50')</span>
+                <span>Coupon Applied ('SORRYBRO')</span>
                 <span>-₹{discount}</span>
               </div>
             )}
@@ -420,6 +657,14 @@ export default function CheckoutPage({ cart = [], setCart, navigateTo }) {
                 <span>+₹{hoverFee}</span>
               </div>
             )}
+
+            {/* DYNAMIC SMALL FEES LIST */}
+            {dynamicFees.map((f, index) => (
+              <div key={index} className="cart-fee-row penalty flex justify-between text-red-light font-bold bg-red/5 p-1.5 px-2 rounded border border-red/10 animate-fade-in">
+                <span>{f.name}</span>
+                <span>+₹{f.amount}</span>
+              </div>
+            ))}
           </div>
 
           <div className="cart-total border-t-2 border-double border-charcoal pt-4 flex justify-between items-baseline">
@@ -496,12 +741,12 @@ export default function CheckoutPage({ cart = [], setCart, navigateTo }) {
         </div>
       )}
 
-      {/* MODAL 2: AGREEMENT ACCIDENT LAYER */}
-      {activeModal === 'confirm' && (
+      {/* MODAL 2: LAYERED CONFIRMATIONS */}
+      {activeModal === 'confirm-1' && (
         <div className="chaos-modal-overlay fixed inset-0 bg-bg/90 backdrop-blur-md z-[999] flex items-center justify-center p-4 animate-fade-in">
           <div className="chaos-expired-modal bg-bg-card border-2 border-orange max-w-md w-full p-6 rounded-xl shadow-2xl space-y-4">
             <div className="chaos-expired-subtitle font-mono text-[10px] text-orange tracking-widest uppercase font-bold">
-              FINAL SYSTEM AUTHORIZATION
+              FINAL SYSTEM AUTHORIZATION [1/3]
             </div>
             <div className="chaos-expired-title font-display font-black text-2xl tracking-tight">
               Stomach Demolition Protocol
@@ -513,8 +758,11 @@ export default function CheckoutPage({ cart = [], setCart, navigateTo }) {
             </div>
             <div className="chaos-expired-buttons flex flex-col sm:flex-row gap-2 pt-2">
               <button 
-                className="chaos-expired-btn bg-orange hover:bg-orange-light text-cream font-bold py-3 px-4 rounded text-xs uppercase flex-1 transition-colors" 
-                onClick={completeOrder}
+                className="chaos-expired-btn bg-orange hover:bg-orange-light text-cream font-bold py-3 px-4 rounded text-xs uppercase flex-1 transition-colors animate-pulse" 
+                onClick={(e) => {
+                  dispatchEmoji('random_click', e)
+                  setActiveModal('confirm-2')
+                }}
               >
                 Yes, Destroy My Stomach
               </button>
@@ -531,6 +779,116 @@ export default function CheckoutPage({ cart = [], setCart, navigateTo }) {
               </button>
             </div>
           </div>
+        </div>
+      )}
+
+      {activeModal === 'confirm-2' && (
+        <div className="chaos-modal-overlay fixed inset-0 bg-bg/90 backdrop-blur-md z-[999] flex items-center justify-center p-4 animate-fade-in">
+          <div className="chaos-expired-modal bg-bg-card border-2 border-orange max-w-md w-full p-6 rounded-xl shadow-2xl space-y-4">
+            <div className="chaos-expired-subtitle font-mono text-[10px] text-orange tracking-widest uppercase font-bold">
+              FINAL SYSTEM AUTHORIZATION [2/3]
+            </div>
+            <div className="chaos-expired-title font-display font-black text-2xl tracking-tight">
+              Are you REALLY, REALLY sure?
+            </div>
+            <div className="chaos-expired-body text-sm text-cream-dim leading-relaxed">
+              We do not accept refunds, returns, or even general complaints. By proceeding, you agree that your future self has no legal right to be angry at us for ordering cold pizza at 3:00 AM.
+            </div>
+            <div className="chaos-expired-buttons flex flex-col sm:flex-row gap-2 pt-2">
+              <button 
+                className="chaos-expired-btn bg-orange hover:bg-orange-light text-cream font-bold py-3 px-4 rounded text-xs uppercase flex-1 transition-colors font-black" 
+                onClick={(e) => {
+                  dispatchEmoji('random_click', e)
+                  setActiveModal('confirm-3')
+                }}
+              >
+                Yes, I Am Prepared To Regret
+              </button>
+              <button
+                className="chaos-expired-btn bg-transparent border border-charcoal-light hover:border-red text-cream-dim hover:text-red-light font-mono text-[10px] py-3 px-4 rounded flex-1 transition-all"
+                onClick={(e) => {
+                  dispatchEmoji('random_click', e)
+                  alert("Reluctance fine adjusted. Appending ₹50 to invoice.")
+                  setSurchargeFees(prev => ({ ...prev, impatienceFee: prev.impatienceFee + 50 }))
+                  setActiveModal(null)
+                }}
+              >
+                Let me starve in peace
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {activeModal === 'confirm-3' && (
+        <div className="chaos-modal-overlay fixed inset-0 bg-bg/90 backdrop-blur-md z-[999] flex items-center justify-center p-4 animate-fade-in">
+          <div className="chaos-expired-modal bg-bg-card border-2 border-orange max-w-md w-full p-6 rounded-xl shadow-2xl space-y-4">
+            <div className="chaos-expired-subtitle font-mono text-[10px] text-orange tracking-widest uppercase font-bold">
+              FINAL SYSTEM AUTHORIZATION [3/3]
+            </div>
+            <div className="chaos-expired-title font-display font-black text-2xl tracking-tight">
+              You understand the consequences?
+            </div>
+            <div className="chaos-expired-body text-sm text-cream-dim leading-relaxed">
+              This is your last chance to close this browser tab, open your refrigerator, and cook a healthy organic salad at home. Are you absolutely certain you want a delivery driver to launch food at your roof?
+            </div>
+            <div className="chaos-expired-buttons flex flex-col sm:flex-row gap-2 pt-2">
+              <button 
+                className="chaos-expired-btn bg-orange hover:bg-orange-light text-cream font-bold py-3 px-4 rounded text-xs uppercase flex-1 transition-colors font-black" 
+                onClick={(e) => {
+                  dispatchEmoji('random_click', e)
+                  setActiveModal('security-check')
+                }}
+              >
+                Destroy My Stomach Now
+              </button>
+              <button
+                className="chaos-expired-btn bg-transparent border border-charcoal-light hover:border-red text-cream-dim hover:text-red-light font-mono text-[10px] py-3 px-4 rounded flex-1 transition-all"
+                onClick={(e) => {
+                  dispatchEmoji('random_click', e)
+                  alert("Crisis averted! Returning to form.")
+                  setActiveModal(null)
+                }}
+              >
+                Go Back!
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* MODAL 5: FAKE SECURITY SCANNING OVERLAY */}
+      {activeModal === 'security-check' && (
+        <div className="chaos-modal-overlay fixed inset-0 bg-bg/95 backdrop-blur-md z-[999] flex items-center justify-center p-4 animate-fade-in">
+          <div className="chaos-expired-modal bg-bg-card border-2 border-orange max-w-md w-full p-8 rounded-xl shadow-2xl text-center space-y-6">
+            <div className="text-4xl animate-bounce">🤖</div>
+            <div className="chaos-expired-title font-display font-black text-2xl tracking-tight text-orange">
+              AI CHOICE SECURITY EVALUATION
+            </div>
+            
+            <div className="w-full bg-charcoal border border-charcoal-light h-4 rounded-full overflow-hidden relative">
+              <div 
+                className="bg-orange h-full transition-all duration-300 ease-out" 
+                style={{ width: `${securityProgress}%` }}
+              ></div>
+            </div>
+            
+            <div className="font-mono text-xs text-cream-dim leading-relaxed h-12 flex items-center justify-center italic">
+              {securityText}
+            </div>
+
+            <div className="font-mono text-[9px] text-cream-dim/30">
+              * AI choice alignment metric requires secure ledger confirmation protocols.
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* RANDOM ALERTS */}
+      {randomAlert && (
+        <div className="fixed bottom-6 right-6 bg-bg-card border-2 border-red p-4 rounded-lg shadow-2xl max-w-sm z-[9999] animate-fade-in flex items-center gap-3">
+          <span className="text-xl animate-pulse">🛎️</span>
+          <div className="font-mono text-xs text-cream">{randomAlert}</div>
         </div>
       )}
     </div>

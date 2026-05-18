@@ -149,7 +149,7 @@ export default function SuccessPage({ navigateTo, setCart }) {
               
               {receipt.fees.couponDiscount > 0 && (
                 <tr style={{ color: '#4caf50' }}>
-                  <td>Apology Code Applied ('SORRY50')</td>
+                  <td>Apology Code Applied ('SORRYBRO')</td>
                   <td className="price">-₹{receipt.fees.couponDiscount}</td>
                 </tr>
               )}
