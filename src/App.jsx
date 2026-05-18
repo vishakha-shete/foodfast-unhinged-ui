@@ -12,9 +12,10 @@ import MenuPage from './components/MenuPage'
 import CheckoutPage from './components/CheckoutPage'
 import SuccessPage from './components/SuccessPage'
 import SoundEmoji from './components/SoundEmoji'
+import GatewayPage from './components/GatewayPage'
 
 export default function App() {
-  const [currentPage, setCurrentPage] = useState('home')
+  const [currentPage, setCurrentPage] = useState('gateway')
   const [cart, setCart] = useState([])
   const [pageLoading, setPageLoading] = useState(false)
   const [loadingMessage, setLoadingMessage] = useState('')
@@ -78,44 +79,51 @@ export default function App() {
   return (
     <>
       <CursorGlow />
-      <FloatingChaos />
       <SoundEmoji />
-      <Navbar currentPage={currentPage} setCurrentPage={navigateTo} cart={cart} />
       
-      {pageLoading && (
-        <div className="chaos-page-loader">
-          <div className="chaos-page-loader-spinner"></div>
-          <div className="chaos-page-loader-text">{loadingMessage}</div>
-        </div>
-      )}
-
-      {currentPage === 'home' && (
+      {currentPage === 'gateway' ? (
+        <GatewayPage onEnter={() => navigateTo('home')} />
+      ) : (
         <>
-          <Hero navigateTo={navigateTo} />
-          <TrustStrip />
-          <Features />
-          <Testimonials />
-          <CtaSection />
-          <Footer />
-        </>
-      )}
+          <FloatingChaos />
+          <Navbar currentPage={currentPage} setCurrentPage={navigateTo} cart={cart} />
+          
+          {pageLoading && (
+            <div className="chaos-page-loader">
+              <div className="chaos-page-loader-spinner"></div>
+              <div className="chaos-page-loader-text">{loadingMessage}</div>
+            </div>
+          )}
 
-      {currentPage === 'menu' && (
-        <>
-          <MenuPage cart={cart} setCart={setCart} navigateTo={navigateTo} />
-          <Footer />
-        </>
-      )}
+          {currentPage === 'home' && (
+            <>
+              <Hero navigateTo={navigateTo} />
+              <TrustStrip />
+              <Features />
+              <Testimonials />
+              <CtaSection />
+              <Footer />
+            </>
+          )}
 
-      {currentPage === 'checkout' && (
-        <>
-          <CheckoutPage cart={cart} setCart={setCart} navigateTo={navigateTo} />
-        </>
-      )}
+          {currentPage === 'menu' && (
+            <>
+              <MenuPage cart={cart} setCart={setCart} navigateTo={navigateTo} />
+              <Footer />
+            </>
+          )}
 
-      {currentPage === 'success' && (
-        <>
-          <SuccessPage navigateTo={navigateTo} setCart={setCart} />
+          {currentPage === 'checkout' && (
+            <>
+              <CheckoutPage cart={cart} setCart={setCart} navigateTo={navigateTo} />
+            </>
+          )}
+
+          {currentPage === 'success' && (
+            <>
+              <SuccessPage navigateTo={navigateTo} setCart={setCart} />
+            </>
+          )}
         </>
       )}
     </>
