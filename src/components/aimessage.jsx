@@ -12,17 +12,6 @@ const aiMessages = [
 ]
 
 const badReplies = [
-    'That sounds like a terrible idea.',
-    'Management strongly discourages this.',
-    'Emotionally unstable request detected.',
-    'I would not recommend that 😭',
-    'Your confidence is concerning.',
-    'Interesting. Financially dangerous.',
-    'That may permanently damage your wallet.',
-    'I am legally required to disagree.',
-    'This conversation is being judged.',
-    'AI recommends touching grass.',
-    'Your hunger levels are suspicious.',
     'I have alerted upper management.',
     'Bhai ye decision financially dangerous lag raha hai 😭',
 
