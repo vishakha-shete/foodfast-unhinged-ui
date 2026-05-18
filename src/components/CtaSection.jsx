@@ -1,5 +1,6 @@
 // CtaSection.jsx - Upgraded for Certified UX Disruption
 import React, { useState, useEffect, useRef } from 'react'
+import { dispatchEmoji } from './SoundEmoji'
 
 export default function CtaSection() {
   const [email, setEmail] = useState('')
@@ -69,6 +70,7 @@ export default function CtaSection() {
   // Fake Infinitely Broken Form Handling
   const handleSubmit = (e) => {
     e.preventDefault()
+    dispatchEmoji('random_click', e)
     if (!email) return
 
     setSubmitting(true)
@@ -127,6 +129,7 @@ export default function CtaSection() {
               id="cta-submit"
               onMouseMove={handleMouseMove}
               onMouseLeave={handleMouseLeave}
+              onMouseEnter={(e) => dispatchEmoji('hover', e)}
               style={buttonStyle}
               disabled={submitting}
             >

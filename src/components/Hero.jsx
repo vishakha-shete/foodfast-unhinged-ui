@@ -1,6 +1,7 @@
 // Hero.jsx - Upgraded for Maximum Suffering
 import React, { useState, useEffect, useCallback, useRef } from 'react'
 import AppMockup from './AppMockup'
+import { dispatchEmoji } from './SoundEmoji'
 
 export default function Hero({ navigateTo }) {
   const [offset, setOffset] = useState({ x: 0, y: 0 })
@@ -32,7 +33,8 @@ export default function Hero({ navigateTo }) {
   }, [])
 
   // 2. THE TEXT GASLIGHTS THEM: Every click makes it harder to trust reality
-  const handleOrderClick = () => {
+  const handleOrderClick = (e) => {
+    dispatchEmoji('random_click', e)
     setClickCount(prev => prev + 1)
     
     if (evadesCount >= 3) {
@@ -150,6 +152,7 @@ export default function Hero({ navigateTo }) {
               onClick={handleOrderClick}
               onMouseMove={handleMouseMove}
               onMouseLeave={handleMouseLeave}
+              onMouseEnter={(e) => dispatchEmoji('hover', e)}
               style={{ position: 'relative', zIndex: 10 }}
             >
               {orderText}

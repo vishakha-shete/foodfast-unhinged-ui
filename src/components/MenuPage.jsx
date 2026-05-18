@@ -1,5 +1,6 @@
 // MenuPage.jsx - Food selection with Smart UX Crimes
 import React, { useState } from 'react'
+import { dispatchEmoji } from './SoundEmoji'
 
 const MENU_ITEMS = [
   {
@@ -54,7 +55,8 @@ export default function MenuPage({ cart, setCart, navigateTo }) {
   const [loadingItemId, setLoadingItemId] = useState(null)
   const [trafficFee, setTrafficFee] = useState(150)
 
-  const handleAddClick = (item) => {
+  const handleAddClick = (item, e) => {
+    dispatchEmoji('random_click', e)
     // Show premium, smart warning dialog first for emotional manipulation
     setActiveWarning(item)
   }
@@ -123,7 +125,7 @@ export default function MenuPage({ cart, setCart, navigateTo }) {
                 <span className="menu-card-price">₹{item.price}</span>
                 <button 
                   className="menu-card-btn"
-                  onClick={() => handleAddClick(item)}
+                  onClick={(e) => handleAddClick(item, e)}
                   disabled={loadingItemId !== null}
                 >
                   {loadingItemId === item.id ? 'Tuning tastebuds...' : 'Add to Cart'}
@@ -155,7 +157,7 @@ export default function MenuPage({ cart, setCart, navigateTo }) {
                     </div>
                     <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
                       <span className="cart-item-price">₹{item.price * item.qty}</span>
-                      <button className="cart-item-remove" onClick={() => updateQty(item.id, -1)}>✕</button>
+                      <button className="cart-item-remove" onClick={(e) => { dispatchEmoji('random_click', e); updateQty(item.id, -1); }}>✕</button>
                     </div>
                   </div>
                 ))}
@@ -191,7 +193,10 @@ export default function MenuPage({ cart, setCart, navigateTo }) {
 
               <button 
                 className="cart-checkout-btn"
-                onClick={() => navigateTo('checkout')}
+                onClick={(e) => {
+                  dispatchEmoji('random_click', e)
+                  navigateTo('checkout')
+                }}
               >
                 Proceed to Corporate Nightmare
               </button>
@@ -218,14 +223,20 @@ export default function MenuPage({ cart, setCart, navigateTo }) {
             <div className="chaos-expired-buttons">
               <button 
                 className="chaos-expired-btn"
-                onClick={() => confirmAdd(activeWarning)}
+                onClick={(e) => {
+                  dispatchEmoji('random_click', e)
+                  confirmAdd(activeWarning)
+                }}
               >
                 Accept Risk and Proceed
               </button>
               <button 
                 className="chaos-expired-btn"
                 style={{ background: 'transparent', border: '1px solid var(--charcoal-light)' }}
-                onClick={() => setActiveWarning(null)}
+                onClick={(e) => {
+                  dispatchEmoji('random_click', e)
+                  setActiveWarning(null)
+                }}
               >
                 Let me starve in peace
               </button>

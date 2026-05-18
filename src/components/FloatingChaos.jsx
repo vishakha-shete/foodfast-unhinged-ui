@@ -1,6 +1,6 @@
-// FloatingChaos.jsx - Handcrafted Psychological Chaos System
 import React, { useState, useEffect, useRef } from 'react'
 import '../styles/chaos.css'
+import { dispatchEmoji } from './SoundEmoji'
 
 const FLOATING_PRESETS = [
   {
@@ -124,6 +124,7 @@ export default function FloatingChaos() {
         const remaining = FLOATING_PRESETS.filter(p => !prev.some(ap => ap.id === p.id))
         if (remaining.length === 0) return prev
         const randomPreset = remaining[Math.floor(Math.random() * remaining.length)]
+        dispatchEmoji('notify') // Ping!
         return [...prev, randomPreset]
       })
     }, 12000)
@@ -139,6 +140,7 @@ export default function FloatingChaos() {
     const interval = setInterval(() => {
       const randomAi = AI_NOTIFS[Math.floor(Math.random() * AI_NOTIFS.length)]
       const id = Date.now()
+      dispatchEmoji('notify') // Ping!
       setAiToasts(prev => [...prev, { ...randomAi, id }])
 
       // Auto dismiss AI toasts
@@ -159,6 +161,7 @@ export default function FloatingChaos() {
         const idleMessages = ["Still here?", "We admire your patience.", "You seem uncertain."]
         const msg = idleMessages[Math.floor(Math.random() * idleMessages.length)]
         const id = Date.now()
+        dispatchEmoji('idle') // Hum...
         setAiToasts(prev => [...prev, { title: 'System', icon: '👀', body: msg, id }])
         
         setTimeout(() => {
@@ -245,7 +248,8 @@ export default function FloatingChaos() {
   }, [cookieState])
 
   // Handle popup button click actions
-  const handlePopupAction = (presetId, actionText) => {
+  const handlePopupAction = (presetId, actionText, e) => {
+    dispatchEmoji('random_click', e)
     if (presetId === 'extra-fee') {
       alert('💸 Cart upgraded! Double fee accepted. Thank you for supporting our digital waste fund.')
     } else if (presetId === 'driver-give-up') {
@@ -260,7 +264,8 @@ export default function FloatingChaos() {
   }
 
   // Handle close popup - CURSED CLOSING
-  const handlePopupClose = (presetId) => {
+  const handlePopupClose = (presetId, e) => {
+    dispatchEmoji('random_click', e)
     if (presetId === 'extra-fee') {
       // Penalty for closing the fee!
       const penaltyId = 'fee-penalty-' + Date.now()
@@ -283,13 +288,15 @@ export default function FloatingChaos() {
   }
 
   // Update banner actions
-  const handleOptimizeBanner = () => {
+  const handleOptimizeBanner = (e) => {
+    dispatchEmoji('random_click', e)
     setUpdateText('Disappointment delivery already running at maximum physical speed.')
     setUpdateAction('Acknowledge')
   }
 
   // Cookie accept click (if they somehow click it!)
-  const handleCookieAccept = () => {
+  const handleCookieAccept = (e) => {
+    dispatchEmoji('random_click', e)
     setCookieState('lied')
     setTimeout(() => {
       setCookieState('hidden')
@@ -349,7 +356,7 @@ export default function FloatingChaos() {
         <span className="pulse-dot"></span>
         <span>{updateText}</span>
         {updateAction && (
-          <button onClick={handleOptimizeBanner}>{updateAction}</button>
+          <button onClick={(e) => handleOptimizeBanner(e)}>{updateAction}</button>
         )}
       </div>
 
@@ -371,7 +378,7 @@ export default function FloatingChaos() {
               </div>
               <button
                 className="chaos-popup-close"
-                onClick={() => handlePopupClose(p.id)}
+                onClick={(e) => handlePopupClose(p.id, e)}
               >
                 ✕
               </button>
@@ -379,8 +386,8 @@ export default function FloatingChaos() {
             <div className="chaos-popup-body">{p.body}</div>
             <div className="chaos-popup-footer">
               <button
-                className={`chaos-popup-btn ${p.btnPrimary ? 'primary' : ''}`}
-                onClick={() => handlePopupAction(p.id, p.btnText)}
+                className={`chaos-popup-btn ${p.btnPrimary ? 'primary' : 'secondary'}`}
+                onClick={(e) => handlePopupAction(p.id, p.btnText, e)}
               >
                 {p.btnText}
               </button>
@@ -403,7 +410,7 @@ export default function FloatingChaos() {
             <button
               ref={acceptBtnRef}
               className="chaos-cookie-accept"
-              onClick={handleCookieAccept}
+              onClick={(e) => handleCookieAccept(e)}
               style={{
                 left: `${cookieAcceptPos.x}px`,
                 top: `${cookieAcceptPos.y}px`,
@@ -414,7 +421,8 @@ export default function FloatingChaos() {
             </button>
             <button
               className="chaos-cookie-decline"
-              onClick={() => {
+              onClick={(e) => {
+                dispatchEmoji('random_click', e)
                 alert('Decline is disabled for user protection. Cookies accepted automatically.')
                 setCookieState('pref')
               }}
@@ -452,14 +460,20 @@ export default function FloatingChaos() {
             <button
               className="chaos-popup-btn primary"
               style={{ flex: 1, background: 'var(--red)' }}
-              onClick={handleInvasiveAccept}
+              onClick={(e) => {
+                dispatchEmoji('random_click', e)
+                handleInvasiveAccept()
+              }}
             >
               Consent fully
             </button>
             <button
               className="chaos-popup-btn"
               style={{ flex: 1 }}
-              onClick={() => alert('Option locked. Consenting fully is required for local compliance.')}
+              onClick={(e) => {
+                dispatchEmoji('random_click', e)
+                alert('Option locked. Consenting fully is required for local compliance.')
+              }}
             >
               Ask mommy
             </button>
@@ -547,7 +561,8 @@ export default function FloatingChaos() {
                 <div className="chaos-expired-buttons">
                   <button
                     className="chaos-expired-btn"
-                    onClick={() => {
+                    onClick={(e) => {
+                      dispatchEmoji('random_click', e)
                       setSessionState('active')
                       alert('💡 Close enough. Welcome back to the disappointment zone.')
                     }}
@@ -557,7 +572,8 @@ export default function FloatingChaos() {
                   <button
                     className="chaos-expired-btn"
                     style={{ background: 'transparent', border: '1px solid var(--charcoal-light)' }}
-                    onClick={() => {
+                    onClick={(e) => {
+                      dispatchEmoji('random_click', e)
                       alert('Cart cleared. Resetting browser storage to 1999 standards...')
                       setSessionState('active')
                     }}

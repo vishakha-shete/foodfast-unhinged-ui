@@ -1,5 +1,5 @@
-// CheckoutPage.jsx - The Corporate Nightmare Simulator
 import React, { useState, useRef } from 'react'
+import { dispatchEmoji } from './SoundEmoji'
 
 export default function CheckoutPage({ cart = [], setCart, navigateTo }) {
   const [address, setAddress] = useState('')
@@ -36,7 +36,7 @@ export default function CheckoutPage({ cart = [], setCart, navigateTo }) {
   const [hoverFee, setHoverFee] = useState(0)
   const [hoverFeeName, setHoverFeeName] = useState('')
 
-  const handleFeeHover = () => {
+  const handleFeeHover = (e) => {
     if (!hoverFee && Math.random() > 0.4) {
       const fees = [
         { name: "Breathing Fee", amount: 15 },
@@ -46,6 +46,7 @@ export default function CheckoutPage({ cart = [], setCart, navigateTo }) {
       const f = fees[Math.floor(Math.random() * fees.length)]
       setHoverFee(f.amount)
       setHoverFeeName(f.name)
+      dispatchEmoji('fee', e)
     }
   }
 
@@ -121,13 +122,15 @@ export default function CheckoutPage({ cart = [], setCart, navigateTo }) {
     }
   }
 
-  const applyCoupon = () => {
+  const applyCoupon = (e) => {
     if (couponCode.toUpperCase() === 'SORRY50' || couponCode.toUpperCase() === 'DISAPPOINTMENT50') {
       setCouponApplied(true)
       setSurchargeFees(prev => ({ ...prev, couponCharge: 75 }))
       setCouponFeeApplied(true)
+      dispatchEmoji('fail', e)
       alert("🎟️ Coupon applied successfully! ₹50 discount registered.\n\nNote: A ₹75 coupon validation processing surcharge has been added to cover the database index read cost.")
     } else {
+      dispatchEmoji('fail', e)
       alert("❌ Coupon Code not found in our directory of sorry gestures. Please try 'SORRY50' or admit defeat.")
     }
   }
@@ -169,7 +172,8 @@ export default function CheckoutPage({ cart = [], setCart, navigateTo }) {
     setActiveModal('confirm')
   }
 
-  const completeOrder = () => {
+  const completeOrder = (e) => {
+    dispatchEmoji('success', e)
     setActiveModal(null)
     window.finalReceipt = {
       cart: [...cart],
@@ -347,6 +351,7 @@ export default function CheckoutPage({ cart = [], setCart, navigateTo }) {
           <button 
             type="submit" 
             className="cart-checkout-btn w-full bg-orange hover:bg-orange-light text-cream font-bold py-4 px-6 rounded-lg shadow-lg tracking-wide transition-colors uppercase text-sm mt-4 active:scale-[0.99]"
+            onMouseEnter={(e) => dispatchEmoji('hover', e)}
           >
             {buttonTexts[clickCount]}
           </button>
@@ -362,7 +367,7 @@ export default function CheckoutPage({ cart = [], setCart, navigateTo }) {
             <span className="font-mono text-[9px] text-cream-dim/30 bg-charcoal px-2 py-0.5 rounded">SYS_REF // #8410</span>
           </div>
 
-          <div className="cart-fees space-y-2.5 font-mono text-xs text-cream-dim" onMouseEnter={handleFeeHover} onMouseLeave={handleFeeLeave}>
+          <div className="cart-fees space-y-2.5 font-mono text-xs text-cream-dim" onMouseEnter={(e) => handleFeeHover(e)} onMouseLeave={handleFeeLeave}>
             <div className="cart-fee-row flex justify-between">
               <span>Items Total ({itemQuantity})</span>
               <span className="text-cream">₹{subtotal}</span>
@@ -453,7 +458,10 @@ export default function CheckoutPage({ cart = [], setCart, navigateTo }) {
                         ? 'bg-red/10 border-red text-cream font-bold scale-[1.02]' 
                         : 'bg-charcoal border-charcoal-light text-cream-dim hover:border-charcoal hover:bg-charcoal-light/50'
                     }`}
-                    onClick={() => toggleEmoji(e.id)}
+                    onClick={(e) => {
+                      dispatchEmoji('random_click', e)
+                      toggleEmoji(e.id)
+                    }}
                   >
                     <span className="verification-emoji text-3xl">{e.emoji}</span>
                     <span className="verification-caption font-mono text-[9px] tracking-wide uppercase">{e.caption}</span>
@@ -465,13 +473,17 @@ export default function CheckoutPage({ cart = [], setCart, navigateTo }) {
             <div className="chaos-expired-buttons flex flex-col sm:flex-row gap-2 pt-4">
               <button 
                 className="chaos-expired-btn bg-red hover:bg-red-light text-cream font-bold py-3 px-4 rounded text-xs uppercase flex-1 transition-colors" 
-                onClick={handleVerificationSubmit}
+                onClick={(e) => {
+                  dispatchEmoji('random_click', e)
+                  handleVerificationSubmit()
+                }}
               >
                 Submit Metric
               </button>
               <button
                 className="chaos-expired-btn bg-transparent border border-charcoal-light hover:border-cream-dim text-cream-dim hover:text-cream font-mono text-[10px] py-3 px-4 rounded flex-1 transition-all"
-                onClick={() => {
+                onClick={(e) => {
+                  dispatchEmoji('random_click', e)
                   setSurchargeFees(prev => ({ ...prev, happinessFine: 120 }))
                   alert("⚠️ Surcharge Applied: Challenge bypassed. A ₹120 'Lack of Happiness' database calculation levy has been appended to your layout invoice.")
                   handleVerificationSubmit()
@@ -508,7 +520,8 @@ export default function CheckoutPage({ cart = [], setCart, navigateTo }) {
               </button>
               <button
                 className="chaos-expired-btn bg-transparent border border-charcoal-light hover:border-red text-cream-dim hover:text-red-light font-mono text-[10px] py-3 px-4 rounded flex-1 transition-all"
-                onClick={() => {
+                onClick={(e) => {
+                  dispatchEmoji('random_click', e)
                   alert("Impatience logged. Appending ₹50 'Decision Reluctance' fee to baseline schema and shifting viewport back to root container...")
                   setSurchargeFees(prev => ({ ...prev, impatienceFee: prev.impatienceFee + 50 }))
                   setActiveModal(null)

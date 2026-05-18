@@ -48,13 +48,12 @@ export default function CursorGlow() {
     return () => clearInterval(interval)
   }, [])
 
-  // Trigger a native block if they lose their temper and shake the mouse too hard
-  // useEffect(() => {
-  //   if (panicLevel >= 5) {
-  //     alert("⚠️ MOTION SICKNESS DETECTED: You are moving your mouse with excessive aggression. Please hold perfectly still for 10 seconds to stabilize your breakfast.")
-  //     setPanicLevel(0)
-  //   }
-  // }, [panicLevel])
+  useEffect(() => {
+    if (panicLevel >= 5) {
+      alert("⚠️ MOTION SICKNESS DETECTED: You are moving your mouse with excessive aggression. Please hold perfectly still for 10 seconds to stabilize your breakfast.")
+      setPanicLevel(0)
+    }
+  }, [panicLevel])
 
   return (
     <>

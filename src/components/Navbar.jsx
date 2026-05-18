@@ -1,5 +1,6 @@
 // Navbar.jsx - Upgraded for Ultimate Disorientation
 import React, { useState, useEffect } from 'react'
+import { dispatchEmoji } from './SoundEmoji'
 
 export default function Navbar({ currentPage, setCurrentPage, cart = [] }) {
   const [scrolled, setScrolled] = useState(false)
@@ -45,6 +46,7 @@ export default function Navbar({ currentPage, setCurrentPage, cart = [] }) {
   // 3. MISDIRECTION LINKS
   const handleLinkClick = (e, pageName) => {
     e.preventDefault()
+    dispatchEmoji('random_click', e)
     if (pageName === 'home') {
       setCurrentPage('home')
     } else if (pageName === 'menu') {
@@ -60,7 +62,8 @@ export default function Navbar({ currentPage, setCurrentPage, cart = [] }) {
   }
 
   // 4. LOG OUT INSTEAD OF LOG IN
-  const handleLoginClick = () => {
+  const handleLoginClick = (e) => {
+    dispatchEmoji('random_click', e)
     alert("Success! You have been logged out of your real-life banking app. Have a nice day.")
   }
 
@@ -112,6 +115,7 @@ export default function Navbar({ currentPage, setCurrentPage, cart = [] }) {
           className="nav-cta"
           id="nav-login-btn"
           onClick={handleLoginClick}
+          onMouseEnter={(e) => dispatchEmoji('hover', e)}
           style={{ cursor: 'not-allowed' }} // Shows the red circle-slash cursor
         >
           {loginText}

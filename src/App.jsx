@@ -11,6 +11,7 @@ import FloatingChaos from './components/FloatingChaos'
 import MenuPage from './components/MenuPage'
 import CheckoutPage from './components/CheckoutPage'
 import SuccessPage from './components/SuccessPage'
+import SoundEmoji from './components/SoundEmoji'
 
 export default function App() {
   const [currentPage, setCurrentPage] = useState('home')
@@ -78,6 +79,7 @@ export default function App() {
     <>
       <CursorGlow />
       <FloatingChaos />
+      <SoundEmoji />
       <Navbar currentPage={currentPage} setCurrentPage={navigateTo} cart={cart} />
       
       {pageLoading && (
