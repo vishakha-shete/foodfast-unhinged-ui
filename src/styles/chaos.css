@@ -559,7 +559,7 @@ body {
 
 .emoji-random-react { 
   animation: emojiAnimRandom 5s cubic-bezier(0.25, 0.46, 0.45, 0.94) forwards;
-  font-size: 5rem;
+  font-size: 9rem;
 }
 @keyframes emojiAnimRandom {
   0% { transform: translateY(0) rotate(calc(var(--r) * -1)) scale(0); opacity: 0; }
@@ -569,178 +569,348 @@ body {
   100% { transform: translateY(-150px) rotate(calc(var(--r) * -1)) scale(0.9); opacity: 0; }
 }
 
-/* ===== PRE-ENTRY GATEWAY PAGE STYLES (PREMIUM CINEMATIC BRUTALISM) ===== */
-.gateway-viewport {
-  background-color: #0b0a09;
-  font-family: 'Space Grotesk', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-  color: #f5f0e8;
-  position: relative;
-  overflow: hidden;
-}
+/* =======================================================
+   EXTRA PREMIUM "TRICK UX" ENHANCEMENTS 😭🔥
+   Add BELOW your existing gateway CSS
+======================================================= */
 
-/* Background Atmosphere Glows */
-.gateway-ambient-glow {
+/* =========================================
+   Fake secure pulse border
+========================================= */
+
+.gateway-container::after{
+  content: 'SECURE • TRUSTED • ISO CERTIFIED • EMOTIONALLY UNSAFE';
+
   position: absolute;
-  top: 50%;
+
+  bottom: -14px;
   left: 50%;
-  transform: translate(-50%, -50%);
-  width: 90vw;
-  height: 80vh;
-  background: radial-gradient(circle at center, rgba(200, 97, 42, 0.05) 0%, rgba(155, 59, 59, 0.03) 40%, transparent 70%);
-  filter: blur(100px);
-  pointer-events: none;
-  z-index: 1;
-}
 
-.gateway-grain {
-  position: absolute;
-  inset: 0;
-  background-image: radial-gradient(rgba(255, 255, 255, 0.15) 1px, transparent 0), radial-gradient(rgba(0, 0, 0, 0.3) 1px, transparent 0);
-  background-size: 8px 8px;
-  background-position: 0 0, 4px 4px;
-  opacity: 0.12;
-  pointer-events: none;
-  z-index: 2;
-}
+  transform: translateX(-50%);
 
-/* Cinematic cards */
-.gateway-container {
-  background-color: #171512;
-  border: 4px solid #2d2720;
-  box-shadow: 20px 20px 0px rgba(0, 0, 0, 0.95);
-  transition: all 0.5s cubic-bezier(0.2, 0.8, 0.2, 1);
-  z-index: 10;
-  position: relative;
-}
+  font-size: 10px;
 
-.gateway-container::before {
-  content: '';
-  position: absolute;
-  top: -4px;
-  left: -4px;
-  right: -4px;
-  height: 4px;
-  background: linear-gradient(90deg, #c8612a, #9b3b3b, #c8612a);
-  opacity: 0.8;
-}
+  letter-spacing: .25em;
 
-/* Monospace constraints layout tags */
-.gateway-mono-tag {
-  font-family: 'JetBrains Mono', 'Courier New', monospace;
-  letter-spacing: 0.05em;
-}
+  color: rgba(245,240,232,.35);
 
-/* Interactive Captcha Card overrides */
-.gateway-captcha-card {
-  transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
-  border-width: 2px;
-}
-.gateway-captcha-card:hover {
-  transform: translateY(-2px);
-  border-color: rgba(200, 97, 42, 0.5);
-  box-shadow: 4px 4px 0px rgba(200, 97, 42, 0.1);
-}
-
-/* Desperation range track customization */
-.gateway-desperation-slider {
-  -webkit-appearance: none;
-  appearance: none;
-  background: #24201c;
-  outline: none;
-  border: 2px solid #2d2720;
-  transition: border-color 0.3s;
-}
-.gateway-desperation-slider:focus {
-  border-color: #c8612a;
-}
-.gateway-desperation-slider::-webkit-slider-thumb {
-  -webkit-appearance: none;
-  appearance: none;
-  width: 14px;
-  height: 24px;
-  background: #c8612a;
-  border: 2px solid #0b0a09;
-  cursor: pointer;
-  transition: transform 0.2s;
-}
-.gateway-desperation-slider::-webkit-slider-thumb:hover {
-  transform: scaleY(1.15);
-}
-
-/* Premium magnetic hover transitions */
-.gateway-btn-magnetic {
-  transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
-}
-.gateway-btn-magnetic:hover {
-  transform: translateY(-3px) rotate(-1deg);
-  box-shadow: 8px 8px 0px rgba(0, 0, 0, 0.7);
-}
-.gateway-btn-magnetic:active {
-  transform: translateY(1px);
-  box-shadow: 2px 2px 0px rgba(0, 0, 0, 0.7);
-}
-
-/* Scanning Diagonal stripe progress */
-.gateway-progress-bar-glow {
-  box-shadow: 0 0 15px rgba(200, 97, 42, 0.3);
-}
-
-/* Subtle diagnostic glitch text */
-.gateway-glitch-text {
   font-family: 'JetBrains Mono', monospace;
+
+  white-space: nowrap;
+
+  animation:
+    fakeTrust 4s linear infinite;
+}
+
+@keyframes fakeTrust{
+
+  0%{
+    opacity: .25;
+  }
+
+  50%{
+    opacity: .7;
+  }
+
+  100%{
+    opacity: .25;
+  }
+
+}
+
+/* =========================================
+   Fake cursor scan line 😭🔥
+========================================= */
+
+.gateway-viewport::before{
+
+  content: '';
+
+  position: absolute;
+
+  inset: 0;
+
+  background:
+    linear-gradient(
+      transparent 0%,
+      rgba(200,97,42,.045) 48%,
+      rgba(200,97,42,.08) 50%,
+      transparent 52%
+    );
+
+  background-size: 100% 12px;
+
+  animation:
+    scanMove 10s linear infinite;
+
+  pointer-events: none;
+
+  z-index: 3;
+
+  opacity: .6;
+
+}
+
+@keyframes scanMove{
+
+  from{
+    transform: translateY(-100%);
+  }
+
+  to{
+    transform: translateY(100%);
+  }
+
+}
+
+/* =========================================
+   Fake breathing UI 😭🔥
+========================================= */
+
+.gateway-container{
+
+  animation:
+    subtleBreath 6s ease-in-out infinite;
+
+}
+
+@keyframes subtleBreath{
+
+  0%,100%{
+
+    transform: scale(1);
+
+  }
+
+  50%{
+
+    transform: scale(1.003);
+
+  }
+
+}
+
+/* =========================================
+   Suspicious button glow
+========================================= */
+
+.gateway-btn-magnetic{
+
   position: relative;
-  text-shadow: 0.05em 0 0 rgba(255,0,0,.15), -0.025em -0.05em 0 rgba(0,255,0,.15), 0.025em 0.05em 0 rgba(0,0,255,.15);
-  animation: glitchLog 2s infinite;
+
+  overflow: hidden;
+
 }
 
-@keyframes glitchLog {
-  0%, 100% { text-shadow: 0.02em 0 0 rgba(200,97,42,0.1), -0.02em -0.01em 0 rgba(155,59,59,0.1); }
-  50% { text-shadow: -0.01em 0.02em 0 rgba(200,97,42,0.15), 0.01em -0.02em 0 rgba(155,59,59,0.15); }
+.gateway-btn-magnetic::before{
+
+  content: '';
+
+  position: absolute;
+
+  top: 0;
+  left: -120%;
+
+  width: 60%;
+  height: 100%;
+
+  background:
+    linear-gradient(
+      90deg,
+      transparent,
+      rgba(255,255,255,.08),
+      transparent
+    );
+
+  transform: skewX(-20deg);
+
 }
 
-/* Compliance alerts styling */
-.gateway-floating-alert {
-  backdrop-filter: blur(12px);
-  background-color: rgba(30, 27, 23, 0.95);
-  border: 4px solid #c8612a;
-  box-shadow: 8px 8px 0px rgba(0, 0, 0, 0.6);
-  animation: alertFloat 4s ease-in-out infinite;
+.gateway-btn-magnetic:hover::before{
+
+  animation:
+    suspiciousSweep .8s ease;
+
 }
 
-@keyframes alertFloat {
-  0%, 100% { transform: translateY(0); }
-  50% { transform: translateY(-4px); }
+@keyframes suspiciousSweep{
+
+  to{
+    left: 160%;
+  }
+
 }
 
-/* Shaking server node */
-.animate-shake {
-  animation: gatewayShake 0.25s cubic-bezier(.36,.07,.19,.97) infinite;
+/* =========================================
+   Fake AI watching dot 😭🔥
+========================================= */
+
+.gateway-ai-watch{
+
+  position: absolute;
+
+  top: 18px;
+  right: 18px;
+
+  width: 12px;
+  height: 12px;
+
+  border-radius: 50%;
+
+  background: #c8612a;
+
+  box-shadow:
+    0 0 12px rgba(200,97,42,.8);
+
+  animation:
+    aiBlink 2s infinite;
+
 }
 
-@keyframes gatewayShake {
-  0%, 100% { transform: translate3d(0, 0, 0); }
-  10%, 90% { transform: translate3d(-1px, 1px, 0); }
-  20%, 80% { transform: translate3d(2px, -1px, 0); }
-  30%, 50%, 70% { transform: translate3d(-3px, 2px, 0); }
-  40%, 60% { transform: translate3d(3px, -2px, 0); }
+@keyframes aiBlink{
+
+  0%,100%{
+    opacity: 1;
+  }
+
+  50%{
+    opacity: .3;
+  }
+
 }
 
-.animate-scale-up {
-  animation: gatewayScaleUp 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+/* =========================================
+   Fake legal disclaimer 😭🔥
+========================================= */
+
+.gateway-legal-warning{
+
+  position: absolute;
+
+  bottom: 18px;
+  left: 24px;
+
+  font-size: 10px;
+
+  max-width: 260px;
+
+  line-height: 1.5;
+
+  opacity: .35;
+
+  color: #f5f0e8;
+
+  font-family: 'JetBrains Mono', monospace;
+
+  letter-spacing: .04em;
+
 }
 
-@keyframes gatewayScaleUp {
-  0% { transform: scale(0.97) translateY(10px); opacity: 0; }
-  100% { transform: scale(1) translateY(0); opacity: 1; }
+/* =========================================
+   Random tiny movement 😭🔥
+========================================= */
+
+.gateway-floating-alert:nth-child(odd){
+
+  animation-duration: 5s;
+
 }
 
-.animate-fade-in {
-  animation: gatewayFadeIn 0.6s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+.gateway-floating-alert:nth-child(even){
+
+  animation-duration: 7s;
+
 }
 
-@keyframes gatewayFadeIn {
-  0% { opacity: 0; transform: translateY(12px); }
-  100% { opacity: 1; transform: translateY(0); }
+/* =========================================
+   Suspicious title glow
+========================================= */
+
+.gateway-main-title{
+
+  position: relative;
+
+  display: inline-block;
+
+}
+
+.gateway-main-title::after{
+
+  content: '';
+
+  position: absolute;
+
+  left: 0;
+  bottom: -6px;
+
+  width: 100%;
+  height: 2px;
+
+  background:
+    linear-gradient(
+      90deg,
+      transparent,
+      #c8612a,
+      transparent
+    );
+
+  opacity: .5;
+
+}
+
+/* =========================================
+   Fake lag hover 😭🔥
+========================================= */
+
+.gateway-captcha-card:hover{
+
+  transition-delay: 80ms;
+
+}
+
+/* =========================================
+   Emotional loading shimmer
+========================================= */
+
+.gateway-progress-bar-glow{
+
+  position: relative;
+
+  overflow: hidden;
+
+}
+
+.gateway-progress-bar-glow::after{
+
+  content: '';
+
+  position: absolute;
+
+  top: 0;
+  left: -40%;
+
+  width: 30%;
+  height: 100%;
+
+  background:
+    linear-gradient(
+      90deg,
+      transparent,
+      rgba(255,255,255,.22),
+      transparent
+    );
+
+  animation:
+    shimmerLoad 1.8s linear infinite;
+
+}
+
+@keyframes shimmerLoad{
+
+  to{
+    left: 140%;
+  }
+
 }
 /* ============================= */
 /* CURSED MUSIC PLAYER UI FIXES */
