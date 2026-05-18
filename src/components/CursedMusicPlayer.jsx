@@ -18,7 +18,7 @@ export default function CursedMusicPlayer({ active }) {
   const laughRef = useRef(null)
   const goofyRef = useRef(null)
 
-  const resumeTimeoutRef = useRef(null)
+  const resumeTimeoutRef = useRef(10)
 
   // =========================
   // INIT AUDIO
@@ -29,33 +29,38 @@ export default function CursedMusicPlayer({ active }) {
     // PLAYLIST 😭🔥
     playlistRef.current = [
 
+      new Audio('/sounds/Pikachu.mp3'),
+
+      new Audio('/sounds/Dam-dam.mp3'),
+
       new Audio('/sounds/Doremon.mp3'),
 
-      new Audio('/sounds/cursed-music.mp3'),
+      new Audio('sounds/Depression.mp3'),
 
-      new Audio('/sounds/Oggy And The Cockroach- Joey.mp3')
+      new Audio('/sounds/Oggy.mp3'),
+
+      new Audio('/sounds/laugh.mp3'),
 
     ]
 
     // VOLUME
     playlistRef.current.forEach(audio => {
 
-      audio.volume = 0.16
+      audio.volume = 0.90
 
     })
 
     // LOOP LAST TRACK
-    playlistRef.current[2].loop = true
 
     // FUNNY SOUNDS
     laughRef.current = new Audio(
-      '/sounds/nishand-the-laugh-song-197566.mp3'
+      '/sounds/laugh.mp3'
     )
 
-    laughRef.current.volume = 0.25
+    laughRef.current.volume = 0.29
 
     goofyRef.current = new Audio(
-      '/sounds/Oggy And The Cockroach- Joey.mp3'
+      '/sounds/Oggy.mp3'
     )
 
     goofyRef.current.volume = 0.22
@@ -92,6 +97,10 @@ export default function CursedMusicPlayer({ active }) {
       currentAudio.currentTime = 0
 
       await currentAudio.play()
+      console.log(
+        'NOW PLAYING:',
+        currentAudio.src
+      )
 
       // TOASTS 😭🔥
       if (index === 0) {
@@ -115,15 +124,20 @@ export default function CursedMusicPlayer({ active }) {
       setTimeout(() => setToast(null), 2500)
 
       // WHEN TRACK ENDS → PLAY NEXT
+      // WHEN TRACK ENDS 😭🔥
       currentAudio.onended = () => {
 
-        const nextTrack = index + 1
+        // NEXT TRACK
+        let nextTrack = index + 1
 
-        if (playlistRef.current[nextTrack]) {
+        // LOOP ENTIRE PLAYLIST FOREVER 😭🔥
+        if (nextTrack >= playlistRef.current.length) {
 
-          playTrack(nextTrack)
+          nextTrack = 0
 
         }
+
+        playTrack(nextTrack)
 
       }
 
@@ -206,16 +220,31 @@ export default function CursedMusicPlayer({ active }) {
       return
     }
 
-    // AUTO RESUME
+    // AUTO RESUME 😭🔥
+
     resumeTimeoutRef.current = setTimeout(() => {
 
       setSadMode(false)
 
-      playTrack(currentTrackRef.current)
+      // FORCE PLAY AGAIN
+      let nextTrack = currentTrackRef.current
+
+      if (
+        nextTrack >= playlistRef.current.length
+      ) {
+
+        nextTrack = 0
+
+      }
+
+      playTrack(nextTrack)
 
       setToast({
+
         text: 'You cannot escape ambiance.',
+
         emoji: '🎵'
+
       })
 
       setTimeout(() => setToast(null), 3500)
