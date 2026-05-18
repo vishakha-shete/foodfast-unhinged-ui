@@ -568,3 +568,47 @@ body {
   80% { transform: translateY(-100px) rotate(calc(var(--r) * 0.5)) scale(1.2); opacity: 0.8; }
   100% { transform: translateY(-150px) rotate(calc(var(--r) * -1)) scale(0.9); opacity: 0; }
 }
+
+/* ===== PRE-ENTRY GATEWAY PAGE STYLES ===== */
+.gateway-viewport {
+  background-color: var(--bg);
+  font-family: var(--font-body);
+  color: var(--cream);
+}
+
+.gateway-container {
+  background-color: var(--bg-card);
+  border-color: var(--charcoal-light);
+  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5), 10px 10px 0px rgba(0,0,0,0.4);
+}
+
+.animate-shake {
+  animation: gatewayShake 0.4s ease-in-out infinite;
+}
+
+@keyframes gatewayShake {
+  0%, 100% { transform: translate(0, 0) rotate(0deg); }
+  20% { transform: translate(-3px, 2px) rotate(-0.5deg); }
+  40% { transform: translate(3px, -2px) rotate(0.5deg); }
+  60% { transform: translate(-2px, -3px) rotate(-0.3deg); }
+  80% { transform: translate(2px, 3px) rotate(0.3deg); }
+}
+
+.animate-scale-up {
+  animation: gatewayScaleUp 0.6s cubic-bezier(0.19, 1, 0.22, 1) forwards;
+}
+
+@keyframes gatewayScaleUp {
+  0% { transform: scale(0.9) opacity: 0; }
+  100% { transform: scale(1) opacity: 1; }
+}
+
+.animate-fade-in {
+  animation: gatewayFadeIn 0.5s ease-out forwards;
+}
+
+@keyframes gatewayFadeIn {
+  0% { opacity: 0; transform: translateY(10px); }
+  100% { opacity: 1; transform: translateY(0); }
+}
+
